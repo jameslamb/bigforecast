@@ -2,4 +2,8 @@
 *.csv
 *.CSV
 
-*.ipynb_checkpoint
+*.ipynb_checkpoints
+*__pycache__/
+*.pyc
+*.xlsx
+*.pptx
