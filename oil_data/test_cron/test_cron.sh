@@ -1,0 +1,2 @@
+name=$RANDOM
+touch $name
