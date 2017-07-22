@@ -1,2 +1,0 @@
-name=$RANDOM
-touch $name
