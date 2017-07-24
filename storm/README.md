@@ -17,9 +17,11 @@ from a kafka queue.
 *  Consumes from kafka
 
 
+
 ## Bolts
 
 * Scraper Bolt
+     * Takes the URL of the story and goes and grabs the whole story
      * Scrapes relevant web content for news item
 
 * Relevance Bolt
