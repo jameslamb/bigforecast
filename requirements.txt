@@ -1,0 +1,5 @@
+requests
+BeautifulSoup
+Pandas
+Numpy
+newspaper3k
