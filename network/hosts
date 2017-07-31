@@ -1,0 +1,4 @@
+127.0.0.1 localhost.localdomain localhost
+10.53.39.68 master.bigforecast.mids master
+10.53.39.76 slave1.bigforecast.mids slave1
+10.53.39.78 slave2.bigforecast.mids slave2

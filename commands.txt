@@ -1,0 +1,31 @@
+
+slcli vs create --datacenter=sjc01 --hostname=master --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=4096 --disk=25 --disk=200 --network=1000 --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=slave1 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=4096 --disk=25 --disk=200 --network=1000 --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=slave2 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=4096 --disk=25 --disk=200 --network=1000 --os=CENTOS_LATEST_64
+
+
+hosts file:
+127.0.0.1 localhost.localdomain localhost
+10.53.39.68 master.bigforecast.mids master
+10.53.39.76 slave1.bigforecast.mids slave1
+10.53.39.78 slave2.bigforecast.mids slave2
+
+
+scp hosts master:/etc/hosts
+scp hosts slave1:/etc/hosts
+scp hosts slave2:/etc/hosts
+
+
+disk is named:
+xvdc on all
+
+Potential issues;
+xml coding in core-site.xml
+
+
+http://50.23.74.106:50070/dfshealth.html
+http://50.23.74.106:8088/cluster
+http://50.23.74.106:19888/jobhistory (for Job History Server)
+
+echo "PS1='\[\e]0;\w\a\]\n\[\e[32m\]\u@\h \[\e[33m\]\w\[\e[0m\]\$ ' " >> ~/.bash_profile
+source ~/.bash_profile
