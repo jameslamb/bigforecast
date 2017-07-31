@@ -16,9 +16,15 @@ from a kafka queue.
 
 *  Consumes from kafka
 
+Sources:
+    * GDELT 15 minute updates
+    * Twitter?
+
 
 
 ## Bolts
+
+There are two basic paths 
 
 * Scraper Bolt
      * Takes the URL of the story and goes and grabs the whole story
