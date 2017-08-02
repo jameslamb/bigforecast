@@ -1,3 +1,0 @@
-streamparse # always required for streamparse projects
-tweepy # required for tapping into tweet source
-redis  # for writing to redis

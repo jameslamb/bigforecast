@@ -1,10 +1,15 @@
+# data
 *.zip
 *.csv
 *.CSV
+*.xlsx
 
+# python stuff
 *.ipynb_checkpoints
 *.ipynb_checkpoints/
 *__pycache__/
 *.pyc
-*.xlsx
+
+# docs
 *.pptx
+*.docx
