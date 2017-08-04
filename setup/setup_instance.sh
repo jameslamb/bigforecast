@@ -8,7 +8,11 @@ if [ ! -d "$HOME/bin" ]; then
   mkdir $HOME/bin
 fi
 
-#### Install Git ####
+
+#########
+## Git ##
+#########
+
 if ! type "git" &> /dev/null; then
     
     echo "Installing Git..."
@@ -21,7 +25,10 @@ if ! type "git" &> /dev/null; then
     echo "Completed installation of Git"
 fi
 
-#### Get project source code ####
+
+#########################
+## Project source code ##
+#########################
 
     # Get the source code
     echo "Fetching application code from GitHub..."
@@ -32,16 +39,24 @@ fi
     git checkout dev
     echo "Completed fetching application code from GitHub."
 
-#### Install misc. system components ####
+
+#############################
+## Misc. system components ##
+#############################
 
     echo "Installing gcc, openssl, and libffi-devel..."
-    sudo yum install -y gcc-c++
-    sudo yum install -y openssl-devel
-    sudo yum install -y libffi-devel
-    sudo yum install -y bzip2
+    sudo yum install -y \
+        bzip2
+        gcc-c++ \
+        libffi-devel \
+        openssl-devel \
+        
     echo "Completed installation of miscellanous system components."
 
-#### Install conda + Anaconda Python 2.7 ####
+
+######################
+## conda + Python 3 ##
+######################
 
 if ! type "conda" &> /dev/null; then
 
@@ -61,7 +76,10 @@ if ! type "conda" &> /dev/null; then
     echo "Completed installation of conda."
 fi
 
-#### Install lein ####
+
+####################
+#### leiningren ####
+####################
 
 # NOTE: This is needed for Storm    
 if ! type "lein" &> /dev/null; then
@@ -81,7 +99,10 @@ if ! type "lein" &> /dev/null; then
     echo "Completed installation of leiningren."
 fi
 
-#### Install Apache Storm ####
+
+######################
+#### Apache Storm ####
+######################
 
 if ! type "storm" &> /dev/null; then
 
@@ -105,7 +126,9 @@ if ! type "storm" &> /dev/null; then
 
 fi
 
-#### Install kafka ####
+##################
+## Apache Kafka ##
+##################
 
 if [ -z ${KAFKA_HOME+x} ]; then
     echo "Installing Apache Kafka..."
@@ -127,7 +150,10 @@ else
     echo "Apache Kafka is already installed! KAFKA_HOME is set to '$KAFKA_HOME'";
 fi
 
-#### Install python package and conda env ####
+
+#######################################
+## project Python package, conda env ##
+#######################################
 
     # Set up variables (since Anaconda isn't on our path yet)
     CONDA_BIN="$HOME/anaconda3/bin"
@@ -148,6 +174,24 @@ fi
 
     # Add bigforecast package to PYTHONPATH to be super sure
     echo "export PYTHONPATH=$HOME/bigforecast/python:$PYTHONPATH" >> ~/.bashrc
+
+
+##############
+## InfluxDB ##
+##############
+
+# Download and install influxDB
+export INFLUX_VERSION=1.3.1
+wget https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUX_VERSION}_amd64.deb
+sudo dpkg -i influxdb_${INFLUX_VERSION}_amd64.deb
+
+# setup that config path
+echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
+source ~/.bashrc
+
+## TODO (jaylamb20@gmail.com)
+# Fix the http part of the config to allow all members of the cluster
+# to write here
 
 # Setup path
 echo "export PATH=$HOME/anaconda3/bin:$PATH:$HOME/bin:$HOME/bin/apache-storm-1.1.0/bin:$HOME/bin/kafka_2.10-0.10.1.1.tgz/bin" >> ~/.bashrc

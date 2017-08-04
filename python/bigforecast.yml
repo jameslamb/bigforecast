@@ -20,6 +20,7 @@ dependencies:
   - feedfinder2==0.0.4
   - feedparser==5.2.1
   - idna==2.5
+  - influxdb==4.1.1
   - jieba3k==0.35.1
   - kafka-python==1.3.3
   - lxml==3.8.0
@@ -38,3 +39,4 @@ dependencies:
   - tldextract==2.1.0
   - urllib3==1.22
 prefix: /Users/jlamb/anaconda3/envs/bigforecast
+
