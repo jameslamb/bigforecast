@@ -5,7 +5,8 @@ normal_packages = [
     'bs4',
     'pandas',
     'numpy',
-    'newspaper3k'
+    'newspaper3k',
+    'sklearn'
 ]
 documentation_packages = [
     "sphinx",
