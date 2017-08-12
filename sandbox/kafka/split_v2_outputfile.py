@@ -24,7 +24,21 @@ def split_v2_GDELT(update_file):
     Output is an iterable object which can be fed to kafka.
     """
 
-    gdelt = pd.read_csv(update_file, sep = "\t", header = None)
+    gdelt = pd.read_csv(update_file, sep = "\t", header = None, compression = "zip",
+                        names = cols)
 
-    return list(gdelt.map(extract_value, 1))
+    #print(gdelt.head())
+
+    return list(gdelt.apply(extract_value, 1))
+
+
+if __name__=="__main__":
+    import subprocess
+
+    test_url = "http://data.gdeltproject.org/gdeltv2/20150218230000.export.CSV.zip"
+    test_file = "20150218230000.export.CSV.zip"
+
+    subprocess.call(["wget", "-O", test_file, test_url])
+    print(split_v2_GDELT(test_file)[0:10])
+    subprocess.call(["rm", test_file])
 
