@@ -18,6 +18,7 @@ Current Devices for HDFS cluster:
 
 On master, sudo password is: 123
 
+ingestion: 50.23.74.107
 
 ## HDFS Cluster
 
