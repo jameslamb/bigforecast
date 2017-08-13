@@ -135,6 +135,24 @@ if ! type "lein" &> /dev/null; then
     echo "Completed installation of leiningren."
 fi
 
+###################
+#### Zookeeper ####
+###################
+
+if ! type "zookeeper" &> /dev/null; then
+
+    echo "Installing zookeeper..."
+
+    # Add Cloudera yum library
+    sudo yum install -y https://archive.cloudera.com/cdh5/one-click-install/redhat/7/x86_64/cloudera-cdh-5.0.x86_64.rpm
+    sudo yum install -y \
+        zookeeper \
+        zookeeper-server
+
+    # References
+    # [1] https://stackoverflow.com/questions/41611275/how-to-install-zookeeper-as-service-on-centos-7
+fi
+
 
 ######################
 #### Apache Storm ####
@@ -151,10 +169,6 @@ if ! type "storm" &> /dev/null; then
     tar -zxf apache-storm-1.1.0.tar.gz && \
     mkdir $HOME/bin/apache-storm-1.1.0/data && \
     rm -rf apache-storm-1.1.0.tar.gz
-
-    # Replace the storm config file with our custom config
-    echo "Replacing the Storm config with custom version..."
-    cp $HOME/bigforecast/storm/storm.yaml $HOME/bin/apache-storm-1.1.0/conf/storm.yaml
 
     # References:
     # [1] https://www.tutorialspoint.com/apache_storm/apache_storm_installation.html
@@ -223,7 +237,7 @@ fi
 ##############
     
     # Install influxDB
-    cp $HOME/bigforecast/influxdb/influxdb.repo /etc/yum.repos.d/influxdb.repo && \
+    cp -f $HOME/bigforecast/influxdb/influxdb.repo /etc/yum.repos.d/influxdb.repo && \
     sudo yum install -y influxdb
 
     # setup that config path
