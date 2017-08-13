@@ -10,6 +10,9 @@ mastefilelist.txt
 *.ipynb_checkpoints/
 *__pycache__/
 *.pyc
+python/dist/
+python/build/
+python/bigforecast.egg-info/
 
 # doc formats
 # docs

@@ -6,15 +6,26 @@ conda-env:
 	else \
 	    conda env update -q -n bigforecast -f python/bigforecast.yml; \
 	fi
-	
+
+clean_python_cache:
+	@echo "Removing Python cache directories..." && \
+	rm -rf python/bigforecast.egg-info && \
+	rm -rf python/bigforecast/__pycache__ && \
+	echo "Done."
+
 install_python:
 	# Creat or update conda env
 	# Install bigforecast Python package into bigforecast env
+	make clean_python_cache && \
 	make conda-env && \
-	source activate bigforecast && \
 	echo "Installing bigforecast package..." && \
-	python python/setup.py install && \
-	echo "Installed bigforecast."
+	cd python && \
+	pip install -e . && \
+	source activate bigforecast && \
+	python setup.py install && \
+	source deactivate && \
+	echo "Installed bigforecast." && \
+	echo "Cleaning up "
 	
 make docs_python:
 	# Create sphinx rst files for every package and subpackage

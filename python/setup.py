@@ -4,9 +4,7 @@ import setuptools
 normal_packages = [
     'bs4',
     'pandas',
-    'numpy',
-    'newspaper3k',
-    'sklearn'
+    'newspaper3k'
 ]
 documentation_packages = [
     "sphinx",
@@ -23,5 +21,6 @@ setuptools.setup(name='bigforecast',
                  extras_requires={
                     'all': normal_packages + documentation_packages,
                     'docs': documentation_packages
-                 }
-)
+                 },
+                 zip_safe=False
+                 )
