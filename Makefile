@@ -24,8 +24,9 @@ install_python:
 	source activate bigforecast && \
 	python setup.py install && \
 	source deactivate && \
-	echo "Installed bigforecast." && \
-	echo "Cleaning up "
+	cd .. && \
+	make clean_python_cache && \
+	echo "Installed bigforecast."
 	
 make docs_python:
 	# Create sphinx rst files for every package and subpackage

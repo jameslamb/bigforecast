@@ -1,1 +1,1 @@
-from bigforecast.elasticsearch import *
+from bigforecast.gdelt import *
