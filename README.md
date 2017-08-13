@@ -21,6 +21,7 @@ The goal of this project is to create an automated system which produces near-te
 * `Kafka` - Distributed messaging queue.
 * `Python 3` - main orchestration tool. Storm bolts, Kafka producer, other miscellaneous tooling all.
 * `Storm` - Stream processing framework.
+* `InfluxDB` - Time series database, used as a short-term store for the data used by our forecasting model. High-frequency data are written to this database and the modeling / validation code uses aggregation queries to test different windowed features.
 
 ## Installation and Configuration <a name="installation"></a>
 
