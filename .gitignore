@@ -11,6 +11,7 @@ mastefilelist.txt
 *__pycache__/
 *.pyc
 
+# doc formats
 # docs
 *.pptx
 *.docx

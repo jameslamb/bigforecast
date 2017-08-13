@@ -20,6 +20,8 @@ The goal of this project is to create an automated system which produces near-te
 
 ## Installation and Configuration <a name="installation"></a>
 
+This application has been tested and developed on [CentOS 7.x](https://wiki.centos.org/Manuals/ReleaseNotes/CentOS7). If you want to use it on other Linnux distributions, you should be able to do so by tweaking the scripts in the `setup/` directory.
+
 ## Running the App <a name="running"></a>
 
 ## References <a name="references"></a>
