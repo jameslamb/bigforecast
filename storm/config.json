@@ -1,0 +1,25 @@
+{
+    "serializer": "json",
+    "topology_specs": "topologies/",
+    "envs": {
+        "prod": {
+            "user": "storm",
+            "nimbus": "storm1.bigforecast.mids",
+            "virtualenv_specs": "virtualenvs/",
+            "workers": [
+                "storm2.bigforecast.mids",
+                "storm3.bigforecast.mids",
+                "storm4.bigforecast.mids"
+            ],
+            "log": {
+                "path": "/var/log/storm/streamparse",
+                "file": "pystorm_{topology_name}_{component_name}_{task_id}_{pid}.log",
+                "max_bytes": 100000,
+                "backup_count": 10,
+                "level": "info"
+            },
+            "use_ssh_for_nimbus": true,
+            "virtualenv_root": "/data/virtualenvs/"
+        }
+    }
+}
