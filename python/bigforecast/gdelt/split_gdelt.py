@@ -2,6 +2,7 @@
 import pandas as pd
 import pkg_resources
 
+
 def extract_fields(row):
     """
     Takes the interesting things out of a row in a dataframe and returns
@@ -28,7 +29,7 @@ def split_v2_GDELT(update_file):
     """
 
     # Get ordered list of column names
-    with open(pkg_resources.resource_filename("gdelt/feature_names.txt", "r") as f:
+    with open(pkg_resources.resource_filename("bigforecast", "gdelt/feature_names.txt"), "r") as f:
         cols = f.readlines()
     cols = list(map(lambda s: s.replace("\n", ""), cols))
 

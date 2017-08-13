@@ -1,3 +1,0 @@
-147878 8e4005c2f842b17a32a59ee7a0e5bf09 http://data.gdeltproject.org/gdeltv2/20170809053000.export.CSV.zip
-230710 14e0b2b626fa1aa35bb9b24fa13a3e30 http://data.gdeltproject.org/gdeltv2/20170809053000.mentions.CSV.zip
-10245254 9f00172621ec66d39e3ec7519468969e http://data.gdeltproject.org/gdeltv2/20170809053000.gkg.csv.zip
