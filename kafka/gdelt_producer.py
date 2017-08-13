@@ -5,14 +5,16 @@ from kafka import KafkaProducer
 import sys
 import time
 import bigforecast as bgf
+import uuid
+import subprocess
 
 # TODO (jaylamb20@gmail.com):
 # read in hostname(s) from environment instead of localhost
 # Set up producer running on localhost:9092
 sys.stdout.write('Starting package metadata producer...\n')
 BOOTSTRAP_SERVERS = ['localhost:9092']
-metadata_producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
-                                  value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+GDELT_producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS,
+                               value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 sys.stdout.write('Producer running on localhost:9092\n')
 
 while True:
@@ -26,11 +28,25 @@ while True:
     # Put the IDs and file URLs on the topic
     for file_info in gdelt_files:
 
-        # Write out to Kafka
         try:
-            metadata_producer.send('GDELT_articles',
-                                   {'article_id': file_info['id'],
-                                    'article_url': file_info['url']})
+            # TODO (jaylamb20@gmail.com):
+            # --- add some logic for checking if we've seen this file?
+            # Log out current file
+            msg = "We have not processed {} yet! Pulling it...\n"
+            sys.stdout.write(msg.format(file_info['url']))
+
+            # Pull down the CSV from GDELT
+            out_name = os.path.join('/tmp/', str(uuid.uuid4()), '.zip')
+            subprocess.call(["wget", "-O", file_info['url'], out_name])
+
+            # Parse through all the events in the file and put them onto
+            # the "GDELT_articles" Kafka topic
+            events = bgf.gdelt.split_v2_GDELT(out_name)
+            for event in events:
+                GDELT_producer.send("GDELT_articles", event)
+
+            subprocess.call(["rm", out_name])
+
         except Exception as e:
             sys.stdout.write(str(e) + '\n')
 

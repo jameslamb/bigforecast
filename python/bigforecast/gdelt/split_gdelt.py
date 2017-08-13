@@ -1,15 +1,12 @@
 
+import pandas as pd
+import pkg_resources
 
-
-def extract_value(row):
+def extract_fields(row):
     """
     Takes the interesting things out of a row in a dataframe and returns
-    a dictionary of them
+    a dictionary of them.
     """
-
-    # Check inputs
-    
-
     # Perhaps we'll want all the actor information, but this for now.
     cols_to_keep = ["GlobalEventID", "Day", "MonthYear",
                     "DATEADDED", "SOURCEURL", "NumMentions",
@@ -17,14 +14,30 @@ def extract_value(row):
                     "GoldsteinScale", "EventRootCode", "QuadClass"]
     return dict(row[cols_to_keep])
 
+
 def split_v2_GDELT(update_file):
     """
-    This function reads a GDELT CSV file and parses each row and splits it up
-    to be fed to the kafka topic one at a time.
+    This function reads a GDELT CSV file and parses each row \
+    and splits it up to be fed to the kafka topic one at a time. \n
 
-    Input is a string of an output file_name
-    Output is an iterable object which can be fed to kafka.
+    Args:
+        update_file (str): a full path to a zipp CSV with GDELT data \n
+
+    Returns:
+        An iterable object with one event/article per item. \n
     """
 
-    gdelt = pd.read_csv(update_file, sep = "\t", header = None, compression = "zip",
-                        names = cols)
+    # Get ordered list of column names
+    with open(pkg_resources.resource_filename("gdelt/feature_names.txt", "r") as f:
+        cols = f.readlines()
+    cols = list(map(lambda s: s.replace("\n", ""), cols))
+
+    # Read in the CSV with GDELT events 2.0 data
+    gdeltDF = pd.read_csv(update_file,
+                          sep="\t",
+                          header=None,
+                          compression="zip",
+                          names=cols)
+
+    # Return a list of rows (one per article)
+    return list(gdeltDF.apply(extract_fields, 1))
