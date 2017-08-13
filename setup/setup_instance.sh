@@ -54,6 +54,30 @@ fi
     echo "Completed installation of miscellanous system components."
 
 
+###################
+## Java (for ES) ##
+###################
+
+    echo "Installing Java...."
+    sudo yum install -y \
+        java-1.8.0-openjdk.x86_64
+
+    echo "Completed installation of Java."
+
+
+###################
+## Elasticsearch ##
+###################
+
+    echo "Installing Elasticsearch..."
+
+    # Download ES 
+    export ES_VERSION=5.5.1
+    cd $HOME/bin
+    curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
+    tar -xvf elasticsearch-${ES_VERSION}.tar.gz
+
+
 ######################
 ## conda + Python 3 ##
 ######################
@@ -126,6 +150,7 @@ if ! type "storm" &> /dev/null; then
 
 fi
 
+
 ##################
 ## Apache Kafka ##
 ##################
@@ -180,22 +205,26 @@ fi
 ## InfluxDB ##
 ##############
 
-# Download and install influxDB
-export INFLUX_VERSION=1.3.1
-wget https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUX_VERSION}_amd64.deb
-sudo dpkg -i influxdb_${INFLUX_VERSION}_amd64.deb
+    # Download and install influxDB
+    export INFLUX_VERSION=1.3.1
+    wget https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUX_VERSION}_amd64.deb
+    sudo dpkg -i influxdb_${INFLUX_VERSION}_amd64.deb
 
-# setup that config path
-echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
-source ~/.bashrc
+    # setup that config path
+    echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
+    source ~/.bashrc
 
-## TODO (jaylamb20@gmail.com)
-# Fix the http part of the config to allow all members of the cluster
-# to write here
+    ## TODO (jaylamb20@gmail.com)
+    # Fix the http part of the config to allow all members of the cluster
+    # to write here
+
+
+###########################
+## Environment variables ##
+###########################
 
 # Setup path
 echo "export PATH=$HOME/anaconda3/bin:$PATH:$HOME/bin:$HOME/bin/apache-storm-1.1.0/bin:$HOME/bin/kafka_2.10-0.10.1.1.tgz/bin" >> ~/.bashrc
-
 
 # Set bigforecast home directory
 if [[ ! -d "$BIGFORECAST_HOME" ]]; then
