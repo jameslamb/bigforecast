@@ -3,8 +3,7 @@ import setuptools
 # Required packages
 normal_packages = [
     'bs4',
-    'pandas',
-    'newspaper3k'
+    'pandas'
 ]
 documentation_packages = [
     "sphinx",
