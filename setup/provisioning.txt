@@ -1,0 +1,37 @@
+
+############################
+#### Ingest head server ####
+############################
+slcli vs create --datacenter=sjc01 --hostname=ingest1 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=16384 --disk=100 --network=1000 --os=CENTOS_LATEST_64
+
+
+#######################
+#### Kafka Cluster ####
+#######################
+slcli vs create --datacenter=sjc01 --hostname=kafka1 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=16384 --disk=25 --disk=100 --network=1000 --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=kafka3 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=16384 --disk=25 --disk=100 --network=1000 --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=kafka3 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=2 --memory=16384 --disk=25 --disk=100 --network=1000 --os=CENTOS_LATEST_64
+
+
+#######################
+### Storm Cluster  ####
+#######################
+slcli vs create --datacenter=sjc01 --hostname=storm1 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=100 --network=1000  --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=storm2 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=100 --network=1000  --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=storm3 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=100 --network=1000 --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=storm4 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=100 --network=1000  --os=CENTOS_LATEST_64
+
+
+###############################
+### Elasticsearch Cluster  ####
+###############################
+slcli vs create --datacenter=sjc01 --hostname=elasticsearch1 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=300 --network=1000  --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=elasticsearch2 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=300 --network=1000  --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=elasticsearch3 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=300 --network=1000  --os=CENTOS_LATEST_64
+slcli vs create --datacenter=sjc01 --hostname=elasticsearch4 --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=4 --memory=32768 --disk=25 --disk=300 --network=1000  --os=CENTOS_LATEST_64
+
+
+#####################################
+### Big modeling + influxDB box  ####
+#####################################
+slcli vs create --datacenter=sjc01 --hostname=modelbox --domain=bigforecast.mids --billing=hourly --key=bigforecast --cpu=16 --memory=65536 --disk=25 --disk=200 --network=1000 --os=CENTOS_LATEST_64

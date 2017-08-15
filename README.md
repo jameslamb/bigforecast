@@ -23,6 +23,8 @@ The goal of this project is to create an automated system which produces near-te
 * `Storm` - Stream processing framework.
 * `InfluxDB` - Time series database, used as a short-term store for the data used by our forecasting model. High-frequency data are written to this database and the modeling / validation code uses aggregation queries to test different windowed features.
 
+![Diagram](bigforecast.png)
+
 ## Installation and Configuration <a name="installation"></a>
 
 This application has been tested and developed on [CentOS 7.x](https://wiki.centos.org/Manuals/ReleaseNotes/CentOS7). If you want to use it on other Linnux distributions, you should be able to do so by tweaking the scripts in the `setup/` directory.
