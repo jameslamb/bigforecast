@@ -144,13 +144,14 @@ if ! type "zookeeper" &> /dev/null; then
     echo "Installing zookeeper..."
 
     # Add Cloudera yum library
-    sudo yum install -y https://archive.cloudera.com/cdh5/one-click-install/redhat/7/x86_64/cloudera-cdh-5.0.x86_64.rpm
+    sudo yum install -y https://archive.cloudera.com/cdh5/one-click-install/redhat/7/x86_64/cloudera-cdh-5-0.x86_64.rpm
     sudo yum install -y \
         zookeeper \
         zookeeper-server
 
     # References
     # [1] https://stackoverflow.com/questions/41611275/how-to-install-zookeeper-as-service-on-centos-7
+    # [2] https://www.cloudera.com/documentation/enterprise/5-9-x/topics/cdh_ig_cdh5_install.html
 fi
 
 
