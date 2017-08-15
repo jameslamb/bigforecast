@@ -29,6 +29,10 @@ The goal of this project is to create an automated system which produces near-te
 
 This application has been tested and developed on [CentOS 7.x](https://wiki.centos.org/Manuals/ReleaseNotes/CentOS7). If you want to use it on other Linnux distributions, you should be able to do so by tweaking the scripts in the `setup/` directory.
 
+### Provisioning Your Cluster
+
+To begin, you should provision a cluster of machines. If you are using [IBM Softlayer](http://www.softlayer.com/) and the associated [Python CLI](http://softlayer-python.readthedocs.io/en/latest/cli.html), you can use the commands listed in `setup/provisioning.txt`.
+
 ## Running the App <a name="running"></a>
 
 ## Data Sources <a name="datasources"></a>
