@@ -122,6 +122,7 @@ if ! type "lein" &> /dev/null; then
     # Bypass warning about running lein as root
     echo "LEIN_ROOT=TRUE" >> /etc/profile
     source /etc/profile
+    export LEIN_ROOT=TRUE
 
     # Make it executable and install it
     cd $HOME/bin && \
