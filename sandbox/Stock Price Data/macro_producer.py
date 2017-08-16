@@ -47,8 +47,6 @@ while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
         str(oil.get_price()) , str(cad.get_price()) , str(goog.get_price()) , str(aapl.get_price())]
     print(row)
     
-     
-
     with open('stockdata.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(row)
