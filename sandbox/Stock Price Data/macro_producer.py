@@ -1,12 +1,13 @@
-import csv  
+import csv
 import datetime
 import time
+from yahoo_finance import Share
 
 class EST5EDT(datetime.tzinfo):
-
+    
     def utcoffset(self, dt):
         return datetime.timedelta(hours=-5) + self.dst(dt)
-
+    
     def dst(self, dt):
         d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
         self.dston = d + datetime.timedelta(days=6-d.weekday())
@@ -19,21 +20,19 @@ class EST5EDT(datetime.tzinfo):
 
     def tzname(self, dt):
         return 'EST5EDT'
-    
+
 dt = datetime.datetime.now(tz=EST5EDT())
 
 while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
-    from yahoo_finance import Share
     oil = Share('uso')
     cad = Share('cad')
     goog = Share('goog')
     aapl = Share('aapl')
     
-    print(oil.get_price())
-    print(cad.get_price())
-    print(goog.get_price())
-    print(aapl.get_price())
-
+    #print(oil.get_price())
+    #print(cad.get_price())
+    #print(goog.get_price())
+    #print(aapl.get_price())
     
     dt = datetime.datetime.now(tz=EST5EDT())
     year = str(dt.year)
@@ -42,13 +41,14 @@ while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
     hour = str(dt.hour)
     minute = str(dt.minute)
     second = str(dt.second)
-
-    row = [year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second , \
-        str(oil.get_price()) , str(cad.get_price()) , str(goog.get_price()) , str(aapl.get_price())]
-    print(row)
     
+    row = [year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second , \
+           str(oil.get_price()) , str(cad.get_price()) , str(goog.get_price()) , str(aapl.get_price())]
+    #print(row)
+           
     with open('stockdata.csv', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(row)
+               
+    time.sleep(15*60)
 
-    time.sleep(15*60) 

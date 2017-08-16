@@ -1,6 +1,7 @@
 import csv
 import datetime
 import time
+from yahoo_finance import Share
 
 class EST5EDT(datetime.tzinfo):
     
@@ -23,7 +24,6 @@ class EST5EDT(datetime.tzinfo):
 dt = datetime.datetime.now(tz=EST5EDT())
 
 while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
-    from yahoo_finance import Share
     oil = Share('uso')
     cad = Share('cad')
     goog = Share('goog')
