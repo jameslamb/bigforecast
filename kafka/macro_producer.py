@@ -17,8 +17,8 @@ class EST5EDT(datetime.tzinfo):
         else:
             return datetime.timedelta(0)
 
-def tzname(self, dt):
-    return 'EST5EDT'
+    def tzname(self, dt):
+        return 'EST5EDT'
 
 dt = datetime.datetime.now(tz=EST5EDT())
 
@@ -29,11 +29,10 @@ while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
     goog = Share('goog')
     aapl = Share('aapl')
     
-    print(oil.get_price())
-    print(cad.get_price())
-    print(goog.get_price())
-    print(aapl.get_price())
-    
+    #print(oil.get_price())
+    #print(cad.get_price())
+    #print(goog.get_price())
+    #print(aapl.get_price())
     
     dt = datetime.datetime.now(tz=EST5EDT())
     year = str(dt.year)
@@ -45,7 +44,7 @@ while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
     
     row = [year+"/"+month+"/"+day+" "+hour+":"+minute+":"+second , \
            str(oil.get_price()) , str(cad.get_price()) , str(goog.get_price()) , str(aapl.get_price())]
-           print(row)
+    #print(row)
            
     with open('stockdata.csv', 'a') as f:
         writer = csv.writer(f)
