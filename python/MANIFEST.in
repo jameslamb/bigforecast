@@ -1,2 +1,2 @@
-gdelt/feature_names.txt
-*.txt
+include gdelt/feature_names.txt
+include *.txt
