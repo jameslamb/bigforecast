@@ -19,7 +19,7 @@ def load_article(a, es, i):
     es.index(index = "news",
              doc_type="article",
              id = i,
-             body = article_to_dict(a))
+             body = a)
 
 
 def process_article(url):

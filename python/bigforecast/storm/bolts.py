@@ -4,9 +4,9 @@ from elasticsearch import Elasticsearch
 import newspaper_utils as npu
 
 # Bolt 1: take in descriptions and write out a set of relationship tuples
-# tuples
 
-# 0: storm tuple ID
+# tuples definition
+# 0: Storm tuple ID
 # 1: json string of GDELT information
 # 2: json string of article download information
 # 3: json string of nlp performed by AnalyzerBolt
@@ -19,12 +19,11 @@ class ScraperBolt(Bolt):
 
     outputs = ['article', 'article_data']
 
-    def initialize(self, conf, ctx):
+    def initialize(self):
         pass
 
     def process(self, tup):
         article_data = json.loads(tup[1])
-
         article = npu.process_article(article_data["url"])
         tup.append(article)
 
@@ -32,17 +31,19 @@ class ScraperBolt(Bolt):
         self.log('Parsed deps: ' + article[""])
         self.emit(out_tup)
 
+
 class AnalyzerBolt(Bolt):
     """This bolt performs some basic nlp on the text for sentiment analysis"""
-    outputs = ["article", "article_data"]
+    outputs = ["article", "article_data", "article_analysis"]
 
     def initialze(self):
         pass
 
     def process(self, tup):
+        # Clearly needs more development, but I want to get this into the topology and test.
         nlp = {}
         article = json.loads(tup[2])
-        nlp["oil_in_title": "1" if "oil" in article["title"] else "0"]
+        nlp["oil_in_title"] =  "1" if "oil" in article["title"] else "0"
         nlp_string = json.dumps(nlp)
 
         tup.append(nlp_string)
@@ -59,5 +60,8 @@ class ESLoaderBolt(Bolt):
         self.es = Elasticsearch([{"host": "", "port": 9200}])
 
     def process(self, tup):
-        article = {**tup[1], **tup[2]} # cool syntax!
+        article = {**json.loads(tup[1]),
+                   **json.loads(tup[2]),
+                   **json.loads(tup[3])}
+
         npu.load_article(article)
