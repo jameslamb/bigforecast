@@ -8,6 +8,22 @@ if [ ! -d "$HOME/bin" ]; then
   mkdir $HOME/bin
 fi
 
+######################################
+## Mount the attached storage drive ##
+######################################
+    
+    # Softlayer handles mounting the first big drive we attached
+    # at "/", so we don't need to do anything special.
+    # Creating the "/data" dir here, as we'll reuse that in application
+    # configs e.g. to redirect logs.
+    # If you want to check what is mounted where, you can run:
+    # 
+    # fdisk -l
+    # findmnt
+    sudo mkdir /data
+
+    # References:
+    # [1] https://docs.oracle.com/cloud/latest/computecs_common/OCSUG/GUID-7393768A-A147-444D-9D91-A56550604EE5.htm#OCSUG196
 
 #########
 ## Git ##
@@ -80,6 +96,19 @@ fi
     rm -rf elasticsearch-${ES_VERSION}.tar.gz && \
     cd $HOME
 
+    # Copy over config
+    mkdir /etc/elasticsearch
+    cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+    cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml $HOME/bin/elasticsearch-5.5.1/config/elasticsearch.yml
+
+    # Create directories for ES to write data to (shouold be consistent with elasticsearch.yml)
+    sudo mkdir -p /data/elasticsearch/data
+    sudo mkdir -p /data/elasticsearch/logs
+
+    echo "Completed installation of Elasticsearch."
+
+    # References:
+    # [1] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-centos-7
 
 ######################
 ## conda + Python 3 ##
@@ -172,6 +201,10 @@ if ! type "storm" &> /dev/null; then
     mkdir $HOME/bin/apache-storm-1.1.0/data && \
     rm -rf apache-storm-1.1.0.tar.gz
 
+    # Add directories for Storm data and logs
+    sudo mkdir -p /data/storm/data
+    sudo mkdir -p /data/storm/logs
+
     # References:
     # [1] https://www.tutorialspoint.com/apache_storm/apache_storm_installation.html
     # [2] http://www.apache.org/dyn/closer.lua/storm/apache-storm-1.1.0/apache-storm-1.1.0.tar.gz
@@ -196,6 +229,10 @@ if [ -z ${KAFKA_HOME+x} ]; then
 
     # Create KAFKA_HOME variable
     echo "export KAFKA_HOME=$HOME/bin/kafka_2.10-0.10.1.1" >> ~/.bashrc
+
+    # Add directories for Kafka data and logs
+    sudo mkdir -p /data/kafka/data
+    sudo mkdir -p /data/kafka/logs
 
     # References:
     # [1] http://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-
@@ -245,6 +282,10 @@ fi
     # setup that config path
     echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
     source ~/.bashrc
+
+    # Add directories for InfluxDB data and logs
+    sudo mkdir -p /data/influx/data
+    sudo mkdir -p /data/influx/logs
 
     ## TODO (jaylamb20@gmail.com)
     # Fix the http part of the config to allow all members of the cluster
