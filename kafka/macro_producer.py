@@ -8,7 +8,6 @@ import datetime
 import pytz
 import time
 
-
 #Notes for Producer:
 #This script is meant to continuously run in the background.  When the stock market is open, the script pulls
 #data from Yahoo finance every 15 minutes and saves it to a influx database called "mydb".
