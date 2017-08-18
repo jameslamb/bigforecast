@@ -14,7 +14,7 @@ fi
 #########
 
 if ! type "git" &> /dev/null; then
-    
+
     echo "Installing Git..."
 
     # Install Git
@@ -51,7 +51,7 @@ fi
         gcc-c++ \
         libffi-devel \
         openssl-devel \
-        
+
     echo "Completed installation of miscellanous system components."
 
 
@@ -72,7 +72,7 @@ fi
 
     echo "Installing Elasticsearch..."
 
-    # Download ES 
+    # Download ES
     export ES_VERSION=5.5.1
     cd $HOME/bin && \
     curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz && \
@@ -103,6 +103,28 @@ if ! type "conda" &> /dev/null; then
     # [1] https://leiningen.org/#install
     echo "Completed installation of conda."
 fi
+
+######################
+### Jupyter Server ###
+######################
+
+# Create Directory
+if [ ! -d "~/.jupyter"]; then
+    mkdir ~/.jupyter
+fi
+
+# Move files
+echo "Setting up Jupyter Notebook web connections"
+cd $HOME/bigforecast/setup &&  \
+    mv jupyter/mycert.pem ~/.jupyter/mycert.pem &&   \
+    mv jupyter/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py &&  \
+    cd $HOME
+
+echo "Completed Setting up Jupyter Notebook web connections"
+
+# References
+# [1] https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html
+
 
 
 ####################
