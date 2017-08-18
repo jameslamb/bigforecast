@@ -1,0 +1,15 @@
+slcli vs create --datacenter=sjc01 --hostname=finaltest --domain=finaltest.net --billing=hourly --key=W271 --cpu=2 --memory=4096 --disk=100 --network=1000 --os=CENTOS_7_64
+
+--------
+python3 -m pip install yahoo-finance
+
+
+ssh root@50.97.237.86
+PW: FHlgq7gv
+-------
+
+[prepping box]
+
+[root@] pip install yahoo-finance
+[root@] vi macro_producer.py 
+-copy in script for pulling data, stock data will be saved as stockdata.csv

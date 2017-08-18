@@ -8,6 +8,22 @@ if [ ! -d "$HOME/bin" ]; then
   mkdir $HOME/bin
 fi
 
+######################################
+## Mount the attached storage drive ##
+######################################
+    
+    # Softlayer handles mounting the first big drive we attached
+    # at "/", so we don't need to do anything special.
+    # Creating the "/data" dir here, as we'll reuse that in application
+    # configs e.g. to redirect logs.
+    # If you want to check what is mounted where, you can run:
+    # 
+    # fdisk -l
+    # findmnt
+    sudo mkdir /data
+
+    # References:
+    # [1] https://docs.oracle.com/cloud/latest/computecs_common/OCSUG/GUID-7393768A-A147-444D-9D91-A56550604EE5.htm#OCSUG196
 
 #########
 ## Git ##
@@ -75,11 +91,30 @@ fi
     # Download ES
     export ES_VERSION=5.5.1
     cd $HOME/bin && \
-    curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz && \
-    tar -xvf elasticsearch-${ES_VERSION}.tar.gz && \
-    rm -rf elasticsearch-${ES_VERSION}.tar.gz && \
+    wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.rpm && \
+    sudo rpm --install elasticsearch-${ES_VERSION}.rpm && \
     cd $HOME
+    echo "Completed installation of Elasticsearch."
 
+    # Configure system to ES starts automatically on boot (useful if we have to restart)
+    echo "Registering Elasticsearch so it will start on boot..."
+    sudo chkconfig --add elasticsearch
+    echo "Done registering Elasticseacrh."
+
+    # Copy over config
+    echo "Replacing default configurations with our own..."
+    cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+    cp -f $HOME/bigforecast/elasticsearch/jvm.options /etc/elasticsearch/jvm.options
+    echo "Done configuring Elasticsearch."
+
+    # Create directories for ES to write data to (shouold be consistent with elasticsearch.yml)
+    sudo mkdir -p /data/elasticsearch/data
+    sudo mkdir -p /data/elasticsearch/logs
+
+    # References:
+    # [1] https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html#install-rpm
+    # [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-centos-7
+    # [3] https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html
 
 ######################
 ## conda + Python 3 ##
@@ -144,6 +179,7 @@ if ! type "lein" &> /dev/null; then
     # Bypass warning about running lein as root
     echo "LEIN_ROOT=TRUE" >> /etc/profile
     source /etc/profile
+    export LEIN_ROOT=TRUE
 
     # Make it executable and install it
     cd $HOME/bin && \
@@ -193,6 +229,10 @@ if ! type "storm" &> /dev/null; then
     mkdir $HOME/bin/apache-storm-1.1.0/data && \
     rm -rf apache-storm-1.1.0.tar.gz
 
+    # Add directories for Storm data and logs
+    sudo mkdir -p /data/storm/data
+    sudo mkdir -p /data/storm/logs
+
     # References:
     # [1] https://www.tutorialspoint.com/apache_storm/apache_storm_installation.html
     # [2] http://www.apache.org/dyn/closer.lua/storm/apache-storm-1.1.0/apache-storm-1.1.0.tar.gz
@@ -217,6 +257,10 @@ if [ -z ${KAFKA_HOME+x} ]; then
 
     # Create KAFKA_HOME variable
     echo "export KAFKA_HOME=$HOME/bin/kafka_2.10-0.10.1.1" >> ~/.bashrc
+
+    # Add directories for Kafka data and logs
+    sudo mkdir -p /data/kafka/data
+    sudo mkdir -p /data/kafka/logs
 
     # References:
     # [1] http://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-
@@ -266,6 +310,10 @@ fi
     # setup that config path
     echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
     source ~/.bashrc
+
+    # Add directories for InfluxDB data and logs
+    sudo mkdir -p /data/influx/data
+    sudo mkdir -p /data/influx/logs
 
     ## TODO (jaylamb20@gmail.com)
     # Fix the http part of the config to allow all members of the cluster
