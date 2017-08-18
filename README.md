@@ -9,6 +9,7 @@
     1. [Provisioning Your Cluster](#provisioning)
     2. [Setting up SSH Access](#ssh)
     3. [Installing Dependencies](#deps)
+    4. [Configuring and Starting Elasticsearch](#elasticsearch)
 4. [Running the App](#running)
 5. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
@@ -89,7 +90,9 @@ chmod a+rwx setup_instance.sh
 ./setup_instance.sh
 ```
 
-You will need to do this for all the other nodes in the cluster. For simplicity and to preserve your sanity, it's strongly recommended that you just install all dependencies on every VM (e.g. don't comment out the Elasticsearch installation on the nodes reserved for the Kafka cluster). You can copy the script to all the other nodes using `scp`:
+**NOTE:** The setup script will pull this repo from GitHub into each node it's run on. If you are working on a fork of `jameslamb/bigforecast`, be sure to change the URL inside `setup_instance.sh`.
+
+You will need to run this script for all the other nodes in the cluster. For simplicity and to preserve your sanity, it's strongly recommended that you just install all dependencies on every VM (e.g. don't comment out the Elasticsearch installation on the nodes reserved for the Kafka cluster). You can copy the script to all the other nodes using `scp`:
 
 ```
 for i in kafka1 kafka2 kafka3 elasticsearch1 elasticsearch2 elasticsearch3 elasticsearch4 modelbox storm1 storm2 storm3 storm4; do scp setup_instance.sh root@$i:/root/; done
@@ -116,6 +119,30 @@ ssh kafka2
 ```
 
 Congratulations! Once this done, every box will have `Elasticsearch`, `Kafka`, `Zookeeper`, `Storm`, `Python 3`, `conda` and a few other things installed! One step closer to the fun stuff.
+
+### Configuring and Starting Elasticsearch <a name="elasticsearch"></a>
+
+As you can see in the architecture diagram above and / or infer from the host names in the provisioning script, this project is designed to use a 4-node [Elasticsearch](https://www.elastic.co/) cluster. This section explains how to get that cluster up and running. It is heavily inspired by [this tutorial for Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-production-elasticsearch-cluster-on-ubuntu-14-04). 
+
+All of the Elasticsearch configuration needed to get up and running is taken care of for you when running `setup_instance.sh`. That script will install Java and Elasticsearch. It will also overwrite the default Elasticsearch configuration files with those tuned to our setup in this project.
+
+To start Elasticsearch and form the cluster, just go into each Elasticsearch node and run the following command:
+
+```
+for i in elasticsearch1 elasticsearch2 elasticsearch3 elasticsearch4; do ssh ${i} "sudo -i service elasticsearch start"; done
+```
+
+That command will create a cluster and use Elasticsearch's [Discoveryy](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html) tools to connect all 4 nodes to it. Once you've done this on all four Elasticsearch nodes, your cluster should be up! Log in to any of the Elasticsearch nodes and run the following command:
+
+```
+curl -XGET curl -XGET 'http://localhost:9200/_cluster/state?pretty'
+```
+
+If this worked correctly, you should see 4 nodes in the "nodes" output. It may look something like this:
+
+```
+
+```
 
 ## Running the App <a name="running"></a>
 

@@ -91,24 +91,30 @@ fi
     # Download ES 
     export ES_VERSION=5.5.1
     cd $HOME/bin && \
-    curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz && \
-    tar -xvf elasticsearch-${ES_VERSION}.tar.gz && \
-    rm -rf elasticsearch-${ES_VERSION}.tar.gz && \
+    wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.rpm && \
+    sudo rpm --install elasticsearch-${ES_VERSION}.rpm && \
     cd $HOME
+    echo "Completed installation of Elasticsearch."
+
+    # Configure system to ES starts automatically on boot (useful if we have to restart)
+    echo "Registering Elasticsearch so it will start on boot..."
+    sudo chkconfig --add elasticsearch
+    echo "Done registering Elasticseacrh."
 
     # Copy over config
-    mkdir /etc/elasticsearch
+    echo "Replacing default configurations with our own..."
     cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
-    cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml $HOME/bin/elasticsearch-5.5.1/config/elasticsearch.yml
+    cp -f $HOME/bigforecast/elasticsearch/jvm.options /etc/elasticsearch/jvm.options
+    echo "Done configuring Elasticsearch."
 
     # Create directories for ES to write data to (shouold be consistent with elasticsearch.yml)
     sudo mkdir -p /data/elasticsearch/data
     sudo mkdir -p /data/elasticsearch/logs
 
-    echo "Completed installation of Elasticsearch."
-
     # References:
-    # [1] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-centos-7
+    # [1] https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html#install-rpm
+    # [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-centos-7
+    # [3] https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html
 
 ######################
 ## conda + Python 3 ##
