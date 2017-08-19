@@ -12,6 +12,7 @@
     4. [Configuring and Starting Elasticsearch](#elasticsearch)
     5. [Configuring and Starting InfluxDB](#influx)
 4. [Running the App](#running)
+    1. [Monitoring Elasticsearch](#monitorelastic)
 5. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 

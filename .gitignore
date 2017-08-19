@@ -19,4 +19,10 @@ python/bigforecast.egg-info/
 *.pptx
 *.docx
 
+# Mac stuff
+*.DS_Store
+Demo/*.DS_Store
+kafka/.DS_Store
+sandbox/.DS_Store
+
 
