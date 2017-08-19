@@ -57,7 +57,7 @@ class ESLoaderBolt(Bolt):
     outputs = ['none']
 
     def initialize(self, conf, ctx):
-        self.es = Elasticsearch([{"host": "", "port": 9200}])
+        self.es = Elasticsearch([{"host": "elasticsearch1", "port": 9200}])
 
     def process(self, tup):
         article = {**json.loads(tup[1]),

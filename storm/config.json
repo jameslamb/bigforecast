@@ -4,8 +4,8 @@
     "virtualenv_specs": "virtualenvs/",
     "envs": {
         "prod": {
-            "user": "storm",
-            "nimbus": "storm1.bigforecast.mids",
+            "user": "root",
+            "nimbus": "storm2:22",
             "workers": [
                 "storm2.bigforecast.mids",
                 "storm3.bigforecast.mids",
@@ -19,7 +19,8 @@
                 "level": "info"
             },
             "use_ssh_for_nimbus": true,
-            "virtualenv_root": "/data/virtualenvs/"
+            "use_virtualenv": false,
+            "virtualenv_root": "/data/virtualenvs"
         }
     }
 }
