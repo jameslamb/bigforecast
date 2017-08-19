@@ -165,7 +165,6 @@ echo "Completed Setting up Jupyter Notebook web connections"
 # [1] https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html
 
 
-
 ####################
 #### leiningren ####
 ####################
