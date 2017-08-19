@@ -210,6 +210,9 @@ if ! type "zookeeper" &> /dev/null; then
         zookeeper \
         zookeeper-server
 
+    # Add data dir
+    sudo mkdir -p /data/zookeeper/data
+
     # References
     # [1] https://stackoverflow.com/questions/41611275/how-to-install-zookeeper-as-service-on-centos-7
     # [2] https://www.cloudera.com/documentation/enterprise/5-9-x/topics/cdh_ig_cdh5_install.html
@@ -260,6 +263,10 @@ if [ -z ${KAFKA_HOME+x} ]; then
 
     # Create KAFKA_HOME variable
     echo "export KAFKA_HOME=$HOME/bin/kafka_2.10-0.10.1.1" >> ~/.bashrc
+
+    # Copy configs
+    sudo cp -f $HOME/bigforecast/kafka/server.properties $HOME/bin/kafka_2.10-0.10.1.1/config/server.properties
+    sudo cp -f $HOME/bigforecast/kafka/zookeeper.properties $HOME/bin/kafka_2.10-0.10.1.1/config/zookeeper.properties
 
     # Add directories for Kafka data and logs
     sudo mkdir -p /data/kafka/data

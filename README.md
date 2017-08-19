@@ -9,8 +9,9 @@
     1. [Provisioning Your Cluster](#provisioning)
     2. [Setting up SSH Access](#ssh)
     3. [Installing Dependencies](#deps)
-    4. [Configuring and Starting Elasticsearch](#elasticsearch)
-    5. [Configuring and Starting InfluxDB](#influx)
+    4. [Configuring and Starting Kafka](#kafka)
+    5. [Configuring and Starting Elasticsearch](#elasticsearch)
+    6. [Configuring and Starting InfluxDB](#influx)
 4. [Running the App](#running)
     1. [Monitoring Elasticsearch](#monitorelastic)
 5. [Data Sources](#datasources)
@@ -121,6 +122,61 @@ ssh kafka2
 ```
 
 Congratulations! Once this done, every box will have `Elasticsearch`, `Kafka`, `Zookeeper`, `Storm`, `Python 3`, `conda` and a few other things installed! One step closer to the fun stuff.
+
+### Configuring and Staring Kafka <a name="kafka"></a>
+
+The first thing we're going to want to set up is [Apache Kafka](https://kafka.apache.org/). Kafka is a fault-tolerant, distributed message queuing system. In this project, it's used to get newly-arriving data queued up for processing and, eventually, storage in a persistent database.
+
+Some of the details of Kafka installation are handled by `setup/setup_instance.sh`. However, to spin up a cluster for use in this project you'll have to do a few things manually. The following installation instructions draw heavily from [this tutorial](http://armourbear.blogspot.com/2015/03/setting-up-multinode-kafka-cluster.html) and [this other tutorial](https://www.tutorialspoint.com/apache_kafka/apache_kafka_installation_steps.htm).
+
+First, we need to create `myid` files on each node, in the directory where zookeeper will write its data. By default in this project (per `setup/setup_instance.sh`), this is `/data/zookeeper/data`. Log in to `kafka1` and run the following:
+
+```
+echo "1" > /data/zookeeper/data/myid
+ssh kafka2 "echo \"2\" > /data/zookeeper/data/myid"
+ssh kafka3 "echo \"3\" > /data/zookeeper/data/myid"
+```
+
+Next, we'll need to give each Kafka node a unique [broker id](http://kafka.apache.org/090/documentation.html). Log in to each Kafka node, open `server.properties`, and set `broker.id` to a different number.
+
+```
+sudo vi $HOME/bin/kafka_2.10-0.10.1.1/config/server.properties
+```
+
+Again, note that you should set a *DIFFERENT ID* (small integer) on each Kafka node.
+
+Next, let's start up [Zookeeper](https://zookeeper.apache.org/) on each Kafka node. Zookeeper is a resource manager and it's super cool. Run the following command on all three Kafka nodes. Don't worry if you see some exceptions pop up initially...these should go away once all nodes join the cluster. In case you're wondering about this mysterious environment variable...we defined it in `setup/setup_instance.sh`.
+
+```
+nohup $KAFKA_HOME/bin/zookeeper-server-start.sh $KAFKA_HOME/config/zookeeper.properties &
+```
+
+To confirm that this worked, run
+
+```
+cat nohup.out
+``
+
+You should see something like this:
+
+```
+[2017-08-18 23:17:24,528] INFO tickTime set to 3000 (org.apache.zookeeper.server.ZooKeeperServer)
+[2017-08-18 23:17:24,528] INFO minSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2017-08-18 23:17:24,528] INFO maxSessionTimeout set to -1 (org.apache.zookeeper.server.ZooKeeperServer)
+[2017-08-18 23:17:24,543] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+```
+
+All that's left now is to actually kick off our [Kafka brokers](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)! Do this on all three Kafka nodes:
+
+```
+nohup $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties &
+```
+
+If, at any point, you need to stop Kafka and change something, run the following command on the relevant VM:
+
+```
+cd $KAFKA_HOME/bin && ./kafka-server-stop.sh
+```
 
 ### Configuring and Starting Elasticsearch <a name="elasticsearch"></a>
 
@@ -259,6 +315,28 @@ systemctl status influxdb
 ```
 
 ## Running the App <a name="running"></a>
+
+### Monitoring Kafka <a name="monitorkafka"></a>
+
+Our preferred Kafka monitoring tool is Yahoo's [kafka-manager](https://github.com/yahoo/kafka-manager). We've decided not to include it in `setup/setup_instance.sh` but this section details how to install it if you want to do so. After completing the steps detailed in the **Installing Kafka** section, log in to `kafka1` and grab the project repo:
+
+```
+cd $HOME/bin && git clone https://github.com/yahoo/kafka-manager
+```
+
+You will need to update the `kafka-manager.zkhosts` variable in `conf/application.conf`
+
+```
+sudo vi $HOME/bin/kafka-manager/conf/application.conf
+```
+
+If you've followed our naming conventions and resource provisioning, change it to this:
+
+```
+kafka-manager.zkhosts="kafka1:2181,kafka2:2181,kafka3:2181"
+```
+
+From that point forward, just follow the instructions in the [kafka-manager README](https://github.com/yahoo/kafka-manager) and you'll be good to go!
 
 ### Monitoring Elasticsearch <a name="monitorelastic"></a>
 

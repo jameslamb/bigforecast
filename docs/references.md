@@ -33,6 +33,10 @@ This page is a dumping ground for links we found helpful throughout this process
 
 1. [Kafka installation](https://www.tutorialspoint.com/apache_kafka/apache_kafka_installation_steps.htm)
 2. [Kafka Python package](https://github.com/dpkp/kafka-python)
+3. [Blog post with a decent Kafka setup walkthrough](http://armourbear.blogspot.com/2015/03/setting-up-multinode-kafka-cluster.html)
+4. [Kafka configuration explained](http://kafka.apache.org/090/documentation.html)
+5. [Kafka-manager, a web UI for Kafka](https://github.com/yahoo/kafka-manager)
+6. [Kafka in a nutshell](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)
 
 ## CentOS/Linux <a name="centos"></a>
 
