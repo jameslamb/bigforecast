@@ -4,6 +4,9 @@ from kafka import KafkaConsumer
 import json
 from streamparse.spout import Spout
 import random
+import subprocess
+from bigforecast.gdelt.split_gdelt import split_v2_GDELT
+import time
 
 class KafkaArticleSpout(Spout):
 
@@ -44,6 +47,37 @@ class SampleArticleSpout(Spout):
         out_tuple = []
         out_tuple.append(json.dumps(msg_dict))
         self.emit(out_tuple)
+
+    def ack(self, tup_id):
+        pass  # if a tuple is processed properly, do nothing
+
+    def fail(self, tup_id):
+        pass  # if a tuple fails to process, do nothing
+
+
+class SampleGDELTSpout(Spout):
+    """This is a step up from the SampleArticleSpout in which it reads GDELT file,
+    and uses the same functions kafka will use to extract it."""
+    outputs = ['article']
+
+    def initialize(self, stormconf, context):
+        dl_url = "http://data.gdeltproject.org/gdeltv2/20170819204500.export.CSV.zip"
+        dl_name = "20170819204500.export.CSV.zip"
+        subprocess.call(["wget", "-O", dl_name, dl_url])
+        self.log("Spout completed getting the file")
+        self.articles = iter(split_v2_GDELT(dl_name))
+        self.log("Spout completed parsing hte file")
+
+    def next_tuple(self):
+        try:
+            msg_dict = next(self.articles)
+            out_tuple = []
+            out_tuple.append(json.dumps(msg_dict))
+            self.emit(out_tuple)
+        except Exception as e:
+            self.log(str(e))
+            self.log("Completed emitting events.")
+            time.sleep(10)
 
     def ack(self, tup_id):
         pass  # if a tuple is processed properly, do nothing

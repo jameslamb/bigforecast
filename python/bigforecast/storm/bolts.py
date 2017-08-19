@@ -23,13 +23,15 @@ class ScraperBolt(Bolt):
 
     def process(self, tup):
         article_data = json.loads(tup.values[0])
-        article = npu.process_article(article_data["url"])
-        out_tup = (tup.values[0], json.dumps(article))
-
-
-        # emit package-dependency tuples
-        #self.log('Parsed deps: ' + article[""])
-        self.emit(out_tup)
+        self.log("Recieved tuple: " + str(article_data["SOURCEURL"]))
+        # If we can't download or parse the article, ignore it.
+        try:
+            article = npu.process_article(article_data["SOURCEURL"])
+            out_tup = (tup.values[0], json.dumps(article))
+            self.emit(out_tup)
+            self.log("Emitted tuple: " + str(article_data["SOURCEURL"]))
+        except Exception as e:
+            self.log("Failed parsing article: " +  article_data["SOURCEURL"] + str(e))
 
 
 class AnalyzerBolt(Bolt):
@@ -50,10 +52,8 @@ class AnalyzerBolt(Bolt):
         except Exception as e:
             print(e)
 
-
         out_tup = (tup.values[0], tup.values[1], nlp_string)
         self.emit(out_tup)
-
 
 
 # Bolt 2: Take in parsed tuples and update DB
@@ -63,16 +63,16 @@ class ESLoaderBolt(Bolt):
     outputs = ['none']
 
     def initialize(self, conf, ctx):
-        #self.es = Elasticsearch([{"host": "elasticsearch1", "port": 9200}])
-        pass
+        self.es = Elasticsearch([{"host": "elasticsearch1", "port": 9200}])
 
     def process(self, tup):
         article = {**json.loads(tup.values[0]),
                    **json.loads(tup.values[1]),
                    **json.loads(tup.values[2])}
-        self.logger.info(article["title"])
-        self.log("Article" + article["title"])
-        self.log("Article" + article["keywords"])
 
-        #npu.load_article(article)
-
+        try:
+            npu.load_article(article, self.es, article["GlobalEventID"], index = "test")
+            #self.log("Loaded Article: " + str(article["GlobalEventID"]) + ": " +  article["title"])
+        except Exception as e:
+            self.log(str(e))
+            #self.log("Failed to load article into ES:", article["title"])
