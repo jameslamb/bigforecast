@@ -29,17 +29,17 @@ node.name: ${HOSTNAME}
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
-path.data: /data/elasticsearch/data
+#path.data: /data/elasticsearch/data
 #
 # Path to log files:
 #
-path.logs: /data/elasticsearch/logs
+#path.logs: /data/elasticsearch/logs
 #
 # ----------------------------------- Memory -----------------------------------
 #
 # Lock the memory on startup:
 #
-bootstrap.memory_lock: true
+#bootstrap.memory_lock: true
 #
 # Make sure that the heap size is set to about half the memory available
 # on the system and that the owner of the process is allowed to use this
@@ -51,7 +51,7 @@ bootstrap.memory_lock: true
 #
 # Set the bind address to a specific IP (IPv4 or IPv6):
 #
-#network.host: 192.168.0.1
+network.host: ${HOSTNAME}
 #
 # Set a custom port for HTTP:
 #

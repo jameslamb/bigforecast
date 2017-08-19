@@ -10,6 +10,7 @@
     2. [Setting up SSH Access](#ssh)
     3. [Installing Dependencies](#deps)
     4. [Configuring and Starting Elasticsearch](#elasticsearch)
+    5. [Configuring and Starting InfluxDB](#influx)
 4. [Running the App](#running)
 5. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
@@ -129,22 +130,142 @@ All of the Elasticsearch configuration needed to get up and running is taken car
 To start Elasticsearch and form the cluster, just go into each Elasticsearch node and run the following command:
 
 ```
-for i in elasticsearch1 elasticsearch2 elasticsearch3 elasticsearch4; do ssh ${i} "sudo -i service elasticsearch start"; done
+for i in elasticsearch1 elasticsearch2 elasticsearch3 elasticsearch4; do ssh ${i} "sudo systemctl start elasticsearch.service"; done
 ```
 
-That command will create a cluster and use Elasticsearch's [Discoveryy](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html) tools to connect all 4 nodes to it. Once you've done this on all four Elasticsearch nodes, your cluster should be up! Log in to any of the Elasticsearch nodes and run the following command:
+That command will create a cluster and use Elasticsearch's [Discovery](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html) tools to connect all 4 nodes to it. Once you've done this on all four Elasticsearch nodes, your cluster should be up! Log in to any of the Elasticsearch nodes and run the following command:
 
 ```
-curl -XGET curl -XGET 'http://localhost:9200/_cluster/state?pretty'
+curl -XGET curl -XGET 'http://<host_ip>:9200/_cluster/state?pretty'
 ```
 
 If this worked correctly, you should see 4 nodes in the "nodes" output. It may look something like this:
 
 ```
-
+...
+  "nodes" : {
+    "6fTZGAuyT6OvLq1_AaLzUQ" : {
+      "name" : "elasticsearch1",
+      "ephemeral_id" : "sDdnlBNHSFaiL43cE9PLGA",
+      "transport_address" : "169.53.131.87:9300",
+      "attributes" : { }
+    },
+    "CnElG-S6RbChpHC6lYSZZw" : {
+      "name" : "elasticsearch4",
+      "ephemeral_id" : "YM5MUyUPTeKVA-ZmLV_A_Q",
+      "transport_address" : "169.53.131.86:9300",
+      "attributes" : { }
+    },
+    "bJVY3g1ZSCWnQq04vZznPw" : {
+      "name" : "elasticsearch3",
+      "ephemeral_id" : "fFB3CzijSxW3hJks6o6oDw",
+      "transport_address" : "169.53.131.94:9300",
+      "attributes" : { }
+    },
+    "_F8K-F8RSVKXcgtsmMBxCw" : {
+      "name" : "elasticsearch2",
+      "ephemeral_id" : "Ov5iLRt9TcCUxOFPUY8fGw",
+      "transport_address" : "169.53.131.83:9300",
+      "attributes" : { }
+    }
+  }
+...
 ```
 
+To view logs for Elasticsearch, you can run the following on one of the VMs running Elasticsearch:
+
+```
+tail /var/log/elasticsearch/bigforecast.log
+tail /var/log/elasticsearch/elasticsearch.log
+```
+
+If you ever need to stop Elasticsearch on one of the nodes, you can log in to the box you want to stop and run this command:
+
+```
+sudo systemctl stop elasticsearch.service
+```
+
+### Configuring and Starting InfluxDB <a name="influx"></a>
+
+This project uses [InfluxDB](https://www.influxdata.com/) as the serving database for model training. Influx is a time-series DB with really slick semantics for pushing windowed aggregations into the query layer. It also offers excellent compression of time series data.
+
+Almost of the installation details for InfluxDB are taken care of in `setup/setup_instance.sh`, inspired in large part by [this tutorial](http://vmkdaily.ghost.io/influxdb-and-grafana-on-centos/).
+
+Therea are two tiny steps you'll have to do manually. Following the solution [here](https://eapyl.github.io/article/InfluxDB-cant-be-started-as-a-service-21-December-2016.html), SSH into the noded you want to run InfluxDB on and open up `influxdb.service`
+
+```
+sudo vi /lib/systemd/system/influxdb.service:
+```
+
+Comment out the two lines about "User" and "Group". Your `influxdb.service` will now look something like this:
+
+```
+[Unit]
+Description=InfluxDB is an open-source, distributed, time series database
+Documentation=https://docs.influxdata.com/influxdb/
+After=network-online.target
+
+[Service]
+#User=influxdb
+#Group=influxdb
+LimitNOFILE=65536
+EnvironmentFile=-/etc/default/influxdb
+ExecStart=/usr/bin/influxd -config /etc/influxdb/influxdb.conf ${INFLUXD_OPTS}
+KillMode=control-group
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=influxd.service
+```
+
+Next, we need to configure InfluxDB to take HTTP traffic over its public IP. Do do this, we'll edit `influxdb.conf`. Find the `http` section and pass your Influx node's public IP address in the settings.
+
+```
+sudo vi /etc/influxdb/influxdb.conf
+```
+
+The relevant section may look something like this when you're done:
+
+```
+...
+[http]
+  # Determines whether HTTP endpoint is enabled.
+  enabled = true
+
+  # The bind address used by the HTTP service.
+  bind-address = "198.11.200.86:8086"
+...
+```
+
+OK ok enough nonsense, let's start up the DB! To start up InfluxDB, SSH into whichever VM you want (`modelbox`, in this design) and run the following commands. The first command reloads the settings from the configs we just edited. The second one starts up the DB.
+
+```
+sudo systemctl daemon-reload
+sudo service influxdb start
+```
+
+To check if this worked, you can look in the logs:
+
+```
+tail /var/log/messages
+```
+
+You can also check here:
+
+```
+systemctl status influxdb
+```
+
+To learn more:
+
+- [How to start the InfluxDB Web UI(http://www.techietown.info/2017/03/enable-influxdb-web-ui/)
+
 ## Running the App <a name="running"></a>
+
+### Monitoring Elasticsearch <a name="monitorelastic"></a>
+
+To monitor Elasticsearch while the app is running, we recommend using [elasticsearch-head](https://github.com/mobz/elasticsearch-head). You can install the app [as a Chrome extension](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm/), enter the relevant hostname and port in the box at the top, and you're on your way!
 
 ## Data Sources <a name="datasources"></a>
 

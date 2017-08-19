@@ -98,13 +98,15 @@ fi
 
     # Configure system to ES starts automatically on boot (useful if we have to restart)
     echo "Registering Elasticsearch so it will start on boot..."
-    sudo chkconfig --add elasticsearch
+    sudo systemctl daemon-reload
+    sudo systemctl enable elasticsearch.service
     echo "Done registering Elasticseacrh."
 
     # Copy over config
     echo "Replacing default configurations with our own..."
     cp -f $HOME/bigforecast/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
     cp -f $HOME/bigforecast/elasticsearch/jvm.options /etc/elasticsearch/jvm.options
+    sudo systemctl daemon-reload
     echo "Done configuring Elasticsearch."
 
     # Create directories for ES to write data to (shouold be consistent with elasticsearch.yml)
@@ -134,9 +136,11 @@ if ! type "conda" &> /dev/null; then
     ./install_conda.sh -b -p $HOME/bin/anaconda3 && \
     rm $HOME/install_conda.sh
 
+    # Install python proper
+    sudo yum install -y python-devel
+
     # References:
-    # [1] https://leiningen.org/#install
-    echo "Completed installation of conda."
+    echo "Completed installation of Python and conda."
 fi
 
 ######################
@@ -304,8 +308,15 @@ fi
 ##############
     
     # Install influxDB
-    cp -f $HOME/bigforecast/influxdb/influxdb.repo /etc/yum.repos.d/influxdb.repo && \
     sudo yum install -y influxdb
+
+    # Overwrite the default configs
+    cp -f $HOME/bigforecast/influxdb/influxdb.repo /etc/yum.repos.d/influxdb.repo && \
+    cp -f $HOME/bigforecast/influxdb/influxdb.conf /etc/influxdb/influxdb.conf
+
+    # Configure Influx for automatic startup
+    sudo systemctl daemon-reload
+    sudo systemctl enable influxdb.service
 
     # setup that config path
     echo "export INFLUXDB_CONFIG_PATH=/etc/influxdb/influxdb.conf" >> ~/.bashrc
@@ -314,10 +325,6 @@ fi
     # Add directories for InfluxDB data and logs
     sudo mkdir -p /data/influx/data
     sudo mkdir -p /data/influx/logs
-
-    ## TODO (jaylamb20@gmail.com)
-    # Fix the http part of the config to allow all members of the cluster
-    # to write here
 
     # References
     # [1] https://docs.influxdata.com/influxdb/v1.3/introduction/installation
