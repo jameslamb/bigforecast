@@ -220,7 +220,7 @@ WantedBy=multi-user.target
 Alias=influxd.service
 ```
 
-Next, we need to configure InfluxDB to take HTTP traffic over its public IP. Do do this, we'll edit `influxdb.conf`. Find the `http` section and pass your Influx node's public IP address in the settings.
+Next, we need to configure InfluxDB to take HTTP traffic over its public IP. To do this, we'll edit `influxdb.conf`. Find the `http` section and pass your Influx node's public IP address in the settings.
 
 ```
 sudo vi /etc/influxdb/influxdb.conf
@@ -257,10 +257,6 @@ You can also check here:
 ```
 systemctl status influxdb
 ```
-
-To learn more:
-
-- [How to start the InfluxDB Web UI(http://www.techietown.info/2017/03/enable-influxdb-web-ui/)
 
 ## Running the App <a name="running"></a>
 
