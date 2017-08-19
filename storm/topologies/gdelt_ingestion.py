@@ -7,13 +7,14 @@ from bigforecast.storm.bolts import AnalyzerBolt
 from bigforecast.storm.bolts import ESLoaderBolt
 
 from bigforecast.storm.spouts import KafkaArticleSpout
+from bigforecast.storm.spouts import SampleArticleSpout
 
 # Other imports
 from streamparse import Grouping, Topology
 
 
 class gdeltTopology(Topology):
-    article_spout = KafkaArticleSpout.spec(par=1, name="gdelt-spout")
+    article_spout = SampleArticleSpout.spec(par=1, name="gdelt-spout")
 
     scraper_bolt = ScraperBolt.spec(inputs=[article_spout],
                                     par=8,
