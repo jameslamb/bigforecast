@@ -9,7 +9,6 @@ def article_to_dict(a):
     a_dict["keywords"] = a.keywords
     a_dict["source"] = a.source_url
     a_dict["num_images"] = len(a.images)
-    a_dict["date"] = a.publish_date
     a_dict["url"] = a.url
     a_dict["authors"] = a.authors
     return a_dict

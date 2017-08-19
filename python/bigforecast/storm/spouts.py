@@ -34,14 +34,15 @@ class SampleArticleSpout(Spout):
 
     def initialize(self, stormconf, context):
 
-        urls = ["http://bleacherreport.com/articles/2728061-daycare-owner-recounts-using-mma-to-thwart-attempted-child-abduction?utm_source=cnn.com&utm_campaign=editorial&utm_medium=referral",
+        self.urls = ["http://bleacherreport.com/articles/2728061-daycare-owner-recounts-using-mma-to-thwart-attempted-child-abduction?utm_source=cnn.com&utm_campaign=editorial&utm_medium=referral",
                 "http://www.cnn.com/2017/08/18/entertainment/taylor-swift-social-media-wipe/index.html",
                 "http://money.cnn.com/2017/08/15/technology/amazon-instant-pickup/index.html?iid=ob_homepage_tech_pool"]
 
     def next_tuple(self):
-        msg = urls[random.randint(0,2)]
+        msg = self.urls[random.randint(0,2)]
         msg_dict = {"url": msg}
-        out_tuple = (msg_dict['url'].encode('utf-8'))
+        out_tuple = []
+        out_tuple.append(json.dumps(msg_dict))
         self.emit(out_tuple)
 
     def ack(self, tup_id):

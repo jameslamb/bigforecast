@@ -5,11 +5,10 @@ from bigforecast.storm import newspaper_utils as npu
 
 # Bolt 1: take in descriptions and write out a set of relationship tuples
 
-# tuples definition
-# 0: Storm tuple ID
-# 1: json string of GDELT information
-# 2: json string of article download information
-# 3: json string of nlp performed by AnalyzerBolt
+# tuples.values definitions
+# 0: json string of GDELT information
+# 1: json string of article download information
+# 2: json string of nlp performed by AnalyzerBolt
 
 class ScraperBolt(Bolt):
     """
@@ -19,16 +18,17 @@ class ScraperBolt(Bolt):
 
     outputs = ['article', 'article_data']
 
-    def initialize(self):
+    def initialize(self, conf, ctx):
         pass
 
     def process(self, tup):
-        article_data = json.loads(tup[1])
+        article_data = json.loads(tup.values[0])
         article = npu.process_article(article_data["url"])
-        tup.append(article)
+        out_tup = (tup.values[0], json.dumps(article))
+
 
         # emit package-dependency tuples
-        self.log('Parsed deps: ' + article[""])
+        #self.log('Parsed deps: ' + article[""])
         self.emit(out_tup)
 
 
@@ -37,25 +37,23 @@ class AnalyzerBolt(Bolt):
 
     outputs = ["article", "article_data", "article_analysis"]
 
-    def initialze(self):
+    def initialize(self, conf, ctx):
         pass
 
     def process(self, tup):
         # Clearly needs more development, but I want to get this into the topology and test.
         nlp = {}
         try:
-            article = json.loads(tup[2])
+            article = json.loads(tup.values[1])
             nlp["oil_in_title"] =  "1" if "oil" in article["title"] else "0"
             nlp_string = json.dumps(nlp)
         except Exception as e:
-            print("\n\n\n\n")
             print(e)
-            print("failed on process of analyzer-bolt")
-            print("\n\n\n\n")
 
 
-        tup.append(nlp_string)
-        self.emit(tup)
+        out_tup = (tup.values[0], tup.values[1], nlp_string)
+        self.emit(out_tup)
+
 
 
 # Bolt 2: Take in parsed tuples and update DB
@@ -69,10 +67,12 @@ class ESLoaderBolt(Bolt):
         pass
 
     def process(self, tup):
-        article = {**json.loads(tup[1]),
-                   **json.loads(tup[2]),
-                   **json.loads(tup[3])}
+        article = {**json.loads(tup.values[0]),
+                   **json.loads(tup.values[1]),
+                   **json.loads(tup.values[2])}
         self.logger.info(article["title"])
+        self.log("Article" + article["title"])
+        self.log("Article" + article["keywords"])
 
         #npu.load_article(article)
 
