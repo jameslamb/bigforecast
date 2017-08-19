@@ -13,11 +13,20 @@ clean_python_cache:
 	rm -rf python/bigforecast/__pycache__ && \
 	echo "Done."
 
+jupyter_kernel:
+	# ref: http://ipython.readthedocs.io/en/stable/install/kernel_install.html#kernels-for-different-environments
+	@echo "creating Ipython Notebook kernel from bigforecast conda env..." && \
+	pip install ipykernel && \
+	conda install -y --channel=conda-forge nb_conda_kernels && \
+	source activate bigforecast && \
+	python -m ipykernel install --user --name bigforecast --display-name "Python (bigforecast)"
+
 install_python:
 	# Creat or update conda env
 	# Install bigforecast Python package into bigforecast env
 	make clean_python_cache && \
 	make conda-env && \
+	make jupyter_kernel && \
 	echo "Installing bigforecast package..." && \
 	cd python && \
 	pip install -e . && \
