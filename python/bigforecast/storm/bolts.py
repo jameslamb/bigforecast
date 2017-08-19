@@ -1,7 +1,7 @@
 import json
 from streamparse.bolt import Bolt
 from elasticsearch import Elasticsearch
-import newspaper_utils as npu
+from bigforecast.storm import newspaper_utils as npu
 
 # Bolt 1: take in descriptions and write out a set of relationship tuples
 
