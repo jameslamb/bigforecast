@@ -4,7 +4,9 @@ import setuptools
 normal_packages = [
     'bs4',
     'influxdb',
-    'pandas'
+    'pandas',
+    'sklearn',
+    'statsmodels'
 ]
 documentation_packages = [
     "sphinx",
