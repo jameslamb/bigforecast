@@ -34,6 +34,7 @@ class ScraperBolt(Bolt):
 
 class AnalyzerBolt(Bolt):
     """This bolt performs some basic nlp on the text for sentiment analysis"""
+
     outputs = ["article", "article_data", "article_analysis"]
 
     def initialze(self):
@@ -42,9 +43,16 @@ class AnalyzerBolt(Bolt):
     def process(self, tup):
         # Clearly needs more development, but I want to get this into the topology and test.
         nlp = {}
-        article = json.loads(tup[2])
-        nlp["oil_in_title"] =  "1" if "oil" in article["title"] else "0"
-        nlp_string = json.dumps(nlp)
+        try:
+            article = json.loads(tup[2])
+            nlp["oil_in_title"] =  "1" if "oil" in article["title"] else "0"
+            nlp_string = json.dumps(nlp)
+        except Exception as e:
+            print("\n\n\n\n")
+            print(e)
+            print("failed on process of analyzer-bolt")
+            print("\n\n\n\n")
+
 
         tup.append(nlp_string)
         self.emit(tup)
@@ -57,11 +65,14 @@ class ESLoaderBolt(Bolt):
     outputs = ['none']
 
     def initialize(self, conf, ctx):
-        self.es = Elasticsearch([{"host": "elasticsearch1", "port": 9200}])
+        #self.es = Elasticsearch([{"host": "elasticsearch1", "port": 9200}])
+        pass
 
     def process(self, tup):
         article = {**json.loads(tup[1]),
                    **json.loads(tup[2]),
                    **json.loads(tup[3])}
+        self.logger.info(article["title"])
 
-        npu.load_article(article)
+        #npu.load_article(article)
+
