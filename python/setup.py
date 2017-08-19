@@ -3,7 +3,10 @@ import setuptools
 # Required packages
 normal_packages = [
     'bs4',
-    'pandas'
+    'influxdb',
+    'pandas',
+    'sklearn',
+    'statsmodels'
 ]
 documentation_packages = [
     "sphinx",
@@ -13,7 +16,7 @@ documentation_packages = [
 
 setuptools.setup(name='bigforecast',
                  version='0.1',
-                 description='Python functions used in orchestrating an always-on, self-updated macroeconomic forecasting engine',
+                 description='Python functions used in orchestrating an always-on, self-updating macroeconomic forecasting engine',
                  url='https://github.com/jameslamb/repos/bigforecast',
                  packages=setuptools.find_packages(),
                  install_requires=normal_packages,
