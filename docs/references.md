@@ -20,6 +20,7 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [Heap Size in Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html)
 4. [Important Config Changes](https://www.elastic.co/guide/en/elasticsearch/guide/1.x/_important_configuration_changes.html)
 5. [elasticsearch-head UI](https://github.com/mobz/elasticsearch-head)
+6. [The 'date' datatype in Elasticsearch(https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html)
 
 ## InfluxDB <a name="influxdb"></a>
 
@@ -28,6 +29,8 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [(forum) Starting InfluxDB on CentOS 7](https://community.influxdata.com/t/start-influxdb-service-in-centos-7/961)
 4. [Fixing InfluxDB restart errors](https://eapyl.github.io/article/InfluxDB-cant-be-started-as-a-service-21-December-2016.html)
 5. [Installing InfluxDB v1.3](https://docs.influxdata.com/influxdb/v1.3/introduction/installation)
+6. [How timestamps work in InfluxDB](https://docs.influxdata.com/influxdb/v0.9/guides/writing_data/)
+7. [Multi-Series Aggregate Queries](https://github.com/grafana/grafana/issues/3028)
 
 ## Kafka <a name="kafka"></a>
 
@@ -51,6 +54,10 @@ This page is a dumping ground for links we found helpful throughout this process
 ## Python/Jupyter/Conda <a name="python"></a>
 
 1. [Running Jupyter Server from a Cloud VM](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html)
+2. [Getting Current Time in UTC](https://stackoverflow.com/questions/4548684/how-to-get-the-seconds-since-epoch-from-the-time-date-output-of-gmtime-in-py)
+3. [yahoo-finance module](https://github.com/lukaszbanasiak/yahoo-finance)
+4. [Dropping NAs in Pandas](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.dropna.html)
+5. [About the Jupyter Project](http://jupyter.org/about.html)
 
 ## Storm <a name="storm"></a>
 
@@ -58,6 +65,7 @@ This page is a dumping ground for links we found helpful throughout this process
 2. [Download Mirror for Storm](http://www.apache.org/dyn/closer.lua/storm/apache-storm-1.1.0/apache-storm-1.1.0.tar.gz)
 3. [Installing leiningren for Storm](https://leiningen.org/#install)
 4. [Setting LEIN_ROOT so it installs without interaction](https://stackoverflow.com/questions/41517353/where-to-set-lein-root)
+5. [Timeout and Bolt Heartbeat Issues](https://www.linkedin.com/pulse/heartbeat-issue-apache-storm-chandan-prakash)
 
 ## Zookeeper <a name="zookeeper"></a>
 

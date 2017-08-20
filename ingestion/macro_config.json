@@ -1,0 +1,10 @@
+{
+  "influx_host": "198.11.200.86",
+  "model_db": "modeldb",
+  "tickers": [
+    "uso",
+    "cad",
+    "goog",
+    "aapl"
+  ]
+}

@@ -126,7 +126,7 @@
           "type": "double"
         },
         "DateAdded": {
-          "type": "string"
+          "type": "date"
         },
         "Day": {
           "type": "string"
@@ -175,6 +175,57 @@
         },
         "location": {
           "type": "geo_point"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "authors": {
+          "type": "keyword"
+        },
+        "keywords": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "num_images": {
+          "type": "long"
+        },
+        "oil_in_title": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "keyword"
+        },
+        "text": {
+          "type": "text",
+          "analyzer": "standard",
+          "eager_global_ordinals": true,
+          "fielddata": true,
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "title": {
+          "type": "text",
+          "analyzer": "standard",
+          "eager_global_ordinals": true,
+          "fielddata": true,
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "url": {
+          "type": "keyword"
         }
       }
     }

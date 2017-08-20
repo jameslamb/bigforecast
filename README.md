@@ -14,7 +14,11 @@
     5. [Configuring and Starting Elasticsearch](#elasticsearch)
     6. [Configuring and Starting InfluxDB](#influx)
 5. [Running the App](#running)
-    1. [Monitoring Elasticsearch](#monitorelastic)
+    1. [Kicking off Macro Ingestion](#ingestion)
+    2. [Kicking off GDELT Ingestion](#ingestion)
+    3. [Monitoring Kafka](#monitorkafka)
+    4. [Monitoring Elasticsearch](#monitorelastic)
+    5. [Starting the UI](#jupyter)
 6. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 
@@ -44,14 +48,16 @@ This repository is kind of big. Before moving on with installation, review this 
   - This directory also includes an [Elasticsearch mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html) for the index we use to hold GDELT articles.
 - `influxdb/`
   - config files for InfluxDB
+- `ingestion/`
+  - scripts that ingest data from the outside world into the system
+  - configs for those scripts
 - `kafka/`
   - config files for Kafka
-  - Kafka producers that create streams of ingested data
 - `python`
   - YAML file with deps for the conda env the entire project is running in
   - Python package with the project source code
 - `sandbox`
-  - a dumping ground for random exploratory code that is not a part of actually building an instance of the project. This is a place for miscellaneous little scripts and noteboos
+  - a dumping ground for random exploratory code that is not a part of actually building an instance of the project. This is a place for miscellaneous little scrsipts and noteboos
 - `setup`
   - setup script to be run on each fresh VM. This script will install all major dependencies and overwrite their default configs with those in this repo
   - this directory also contains information like a `hosts` file to match IPs to more friendly host names
@@ -345,6 +351,132 @@ systemctl status influxdb
 
 ## Running the App <a name="running"></a>
 
+### Kicking Off Macro Ingestion <a name="macro"></a>
+
+If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB.
+
+To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/ingestion`. Ingestion of macro data relies on a tiny config file stored at `ingestion/macro_config.json`. This has three fields:
+
+- `influx_host` = A string with the IP address of the box you are running InfluxDB on
+- `modeldb` = A string with the name of the database inside InfluxDB that you want to write data to
+- `tickers` = An array of strings with valid ticker symbols from [Yahoo Finance](https://finance.yahoo.com/lookup/)
+
+Once you've edited this config to your liking, kick off ingestion by running the following commands:
+
+```
+cd $HOME/bigforecast/ingestion
+source activate bigforecast
+nohup ./macro_producer.py &
+```
+
+If you get errors like "command not found", be sure that the producer script is executable:
+
+```
+chmod a+rwx macro_producer.py
+```
+
+You can run the following to check that this is running without error:
+
+```
+tail nohup.out
+```
+
+Once this has been running for a while, you can run something like the example Python code below to check that the data are being written to InfluxDB
+
+```
+from influxdb import DataFrameClient
+import bigforecast.influx as bgfi
+import json
+import pandas as pd
+
+# Read in and parse the config
+with open('macro_config.json', 'r') as f:
+    db_info = json.loads(f.read())
+
+DBNAME = db_info["model_db"]
+HOST = db_info["influx_host"]
+
+# Connect to influx with the DataFrameClient
+influxDB = bgfi.db_connect(host=HOST, database=DBNAME, client_type = "dataframe")
+
+# List series in the DB
+response = influxDB.query("SHOW MEASUREMENTS")
+print(response.raw)
+
+# Build a sample dataset
+query_string = "SELECT mean(value) from aapl, goog " + \
+               "WHERE time > '2017-08-19T00:00:00Z' " + \
+               "GROUP BY time(15s)"
+
+result = influxDB.query(query_string)
+
+# Parse into a list of DataFrames, change column names
+df_list = []
+for name in result.keys():
+  thisDF = result[name]
+  thisDF.columns = [name]
+  df_list.append(thisDF)
+
+# Join the results
+trainDF = df_list[0]
+if len(df_list) > 1:
+  for nextDF in df_list[1:]:
+    trainDF = trainDF.join(nextDF)
+
+# Print the results
+trainDF
+```
+
+In the example above, we exposed a lot of the lower-level details for maximum debuggability. If you just want to play with data and not worry about the details, you could do this:
+
+```
+import bigforecast.influx as bgfi
+
+
+# Connect to the DB
+influxDB = bgfi.db_connest(host="169.53.56.26",
+                           database="modeldb",
+                           client_type="dataframe")
+
+# Get a windowed dataset
+trainDF = bgfi.build_dataset(db_client=influxDB,
+                             var_list=['aapl', 'goog', 'cad', 'uso'],
+                             start_time='2017-08-19 18:00:00',
+                             end_time='2017-08-22',
+                             window_size='30s')
+
+# Drop NAs in the resulting DataFrame
+trainDF = trainDF.dropna(axis=0, how='any')
+
+# Let's take a look
+trainDF
+```
+
+Congratulations! Your macro/finance data ingestion is up and running!
+
+### Kicking Off GDELT Ingestion <a name="monitorkafka"></a>
+
+Ultimately, GDELT article data will be written to Elasticsearch. It is important to set up the index we'll sink article to **before** writing data there, to ensure that Elasticsearch lays the correct schema on the data. If this is not done, we may not be able to do the types of aggregation and filtering required to build the datasets we want.
+
+Log in to `elasticsearch1` and run the following to create the index:
+
+```
+cd $HOME/bigforecast/elasticsearch
+curl -X PUT "elasticsearch1:9200/news" -d @gdelt_mapping.json
+```
+
+If this worked correctly, you should see `news` listed when running this command:
+
+```
+curl -X GET elasticsearch1:9200/_cat/indices
+```
+
+The output will look something like this:
+
+```
+green open news yKmJKWOGRqWWFqRdIYW_Ig 5 1 1024 26 18.4mb 9.1mb
+```
+
 ### Monitoring Kafka <a name="monitorkafka"></a>
 
 Our preferred Kafka monitoring tool is Yahoo's [kafka-manager](https://github.com/yahoo/kafka-manager). We've decided not to include it in `setup/setup_instance.sh` but this section details how to install it if you want to do so. After completing the steps detailed in the **Installing Kafka** section, log in to `kafka1` and grab the project repo:
@@ -371,8 +503,27 @@ From that point forward, just follow the instructions in the [kafka-manager READ
 
 To monitor Elasticsearch while the app is running, we recommend using [elasticsearch-head](https://github.com/mobz/elasticsearch-head). You can install the app [as a Chrome extension](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm/), enter the relevant hostname and port in the box at the top, and you're on your way!
 
+### Starting the UI <a name="jupyter"></a>
+
+The UI for this project is a [jupyter notebook](http://jupyter.org/about.html) with some simple Python code to explore the available data, build a training dataset, train a model, and examine model outputs. All the configuration for this notebook is handled by `setup/setup_instance.sh`, closely following [this tutorial](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html).
+
+To start up the notebook, log in to `modelbox` and run the following:
+
+```
+cd $HOME/bigforecast/ui
+nohup jupyter notebook bigforecast.ipynb &
+```
+
+To run/view the notebook, navigate `<IP>:8888` in Google Chrome, where `<IP>` is the public IP address for `modelbox`. The notebook runs a kernel built from the [bigforecast conda env](https://github.com/jameslamb/bigforecast/blob/dev/python/bigforecast.yml), so you do not need to worry about installing any additional dependencies.
+
+From this point, you should be able to run / change the code and play with the data!
+
 ## Data Sources <a name="datasources"></a>
 
 ### GDELT <a name="gdelt">
 
 The [GDELT 2.0 Event Database](https://blog.gdeltproject.org/gdelt-2-0-our-global-world-in-realtime/) serves as our source of global, potentially market-moving news. In this project, we consume the stream of events coming into `GDELT 2.0` and index them into Elasticsearch. We then use ES queries to create time series feature vectors from the news stories. Detail on the fields available in this dataset can be found in the [GDELT 2.0 Event Database Codebook](http://data.gdeltproject.org/documentation/GDELT-Event_Codebook-V2.0.pdf).
+
+### Yahoo Finance <a name="yahoofinance"></a>
+
+This project relies on macroecomonic and financial time series from [Yahoo Finance](https://finance.yahoo.com/), fetched with the [yahoo-finance Python package](https://github.com/lukaszbanasiak/yahoo-finance). Macro ingestion is treated as a batch process and, for financial time series, is limited to trading days and times when markets are open.

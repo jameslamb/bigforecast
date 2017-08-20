@@ -154,8 +154,8 @@ fi
 
 # Move files
 echo "Setting up Jupyter Notebook web connections"
-sudo mv $HOME/bigforecast/ui/jupyter/mycert.pem $HOME/jupyter/mycert.pem && \
-sudo mv $HOME/bigforecast/ui/jupyter/jupyter_notebook_config.py $HOME/jupyter/jupyter_notebook_config.py && \
+sudo mv $HOME/bigforecast/ui/jupyter/mycert.pem $HOME/.jupyter/mycert.pem && \
+sudo mv $HOME/bigforecast/ui/jupyter/jupyter_notebook_config.py $HOME/.jupyter/jupyter_notebook_config.py && \
 cd $HOME
 
 echo "Completed Setting up Jupyter Notebook web connections"

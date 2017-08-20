@@ -46,7 +46,7 @@ class AnalyzerBolt(Bolt):
         nlp = {}
         try:
             article = json.loads(tup.values[1])
-            nlp["oil_in_title"] =  "1" if "oil" in article["title"] else "0"
+            nlp["oil_in_title"] = "oil" in article["title"]
             nlp_string = json.dumps(nlp)
         except Exception as e:
             print(e)
