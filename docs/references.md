@@ -28,6 +28,8 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [(forum) Starting InfluxDB on CentOS 7](https://community.influxdata.com/t/start-influxdb-service-in-centos-7/961)
 4. [Fixing InfluxDB restart errors](https://eapyl.github.io/article/InfluxDB-cant-be-started-as-a-service-21-December-2016.html)
 5. [Installing InfluxDB v1.3](https://docs.influxdata.com/influxdb/v1.3/introduction/installation)
+6. [How timestamps work in InfluxDB](https://docs.influxdata.com/influxdb/v0.9/guides/writing_data/)
+7. [Multi-Series Aggregate Queries](https://github.com/grafana/grafana/issues/3028)
 
 ## Kafka <a name="kafka"></a>
 
@@ -51,6 +53,8 @@ This page is a dumping ground for links we found helpful throughout this process
 ## Python/Jupyter/Conda <a name="python"></a>
 
 1. [Running Jupyter Server from a Cloud VM](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html)
+2. [Getting Current Time in UTC](https://stackoverflow.com/questions/4548684/how-to-get-the-seconds-since-epoch-from-the-time-date-output-of-gmtime-in-py)
+3. [yahoo-finance module](https://github.com/lukaszbanasiak/yahoo-finance)
 
 ## Storm <a name="storm"></a>
 

@@ -1,28 +1,42 @@
 from influxdb import DataFrameClient
+from influxdb import InfluxDBClient
 import pandas as pd
 
 
-def db_connect(host="198.11.200.86", database="example"):
+def db_connect(host="198.11.200.86", database="example", client_type="influx"):
     """
     Connect to modeling DB. Just assumed you are connecting
     on the same box this notebook is running on.
     We can just hard-code this so we control what people do.
 
+    Args:
+        host (str): A valid IP address identifying an InfluxDB. \n
+        database (str): Name of the DB to hit with queries. \n
+        client_type (str): Set to "dataframe" to get an instance \
+            of influxdb.DataFrameClient. Otherwise, this function \
+            will return an instance of influxdb.InfluxDBClient
+
     Returns:
-        DataFrameClient: An instance of influxdb.DataFrameClient \
-            connected to the bigforecast modelling database.
+        InfluxDBClient: An instance of influxdb.InfluxDBClient \
+            or influxdb.DataFrameClient connected to the \
+            bigforecast modelling database. \n
     """
 
     # Check inputs
     assert isinstance(host, str)
     assert isinstance(database, str)
 
+    if client_type == "dataframe":
+        clientClass = DataFrameClient
+    else:
+        clientClass = InfluxDBClient
+
     # Create and return the client
-    client = DataFrameClient(host=host,
-                             port=8086,
-                             username="root",
-                             password="root",
-                             database=database)
+    client = clientClass(host=host,
+                         port=8086,
+                         username="root",
+                         password="root",
+                         database=database)
     return(client)
 
 
@@ -32,15 +46,15 @@ def list_series(db_client):
     are already stored there.
 
     Args:
-        db_client (DataFrameClient): A valid instance of \
-            influxdb.DataFrameClient \n
+        db_client (InfluxDBClient): A valid instance of \
+            influxdb.InfluxDBClient or influxdb.DataFrameClient \n
 
     Returns:
         list: A list of series names available in the modelling database
     """
 
     # Check inputs
-    assert isinstance(db_client, DataFrameClient)
+    assert isinstance(db_client, InfluxDBClient) or isinstance(db_client, DataFrameClient)
 
     # Grab measurements and parse results
     response = db_client.query("SHOW MEASUREMENTS")
@@ -49,14 +63,38 @@ def list_series(db_client):
     return(series_names)
 
 
+def db_exists(db_client, database):
+    """
+    Check if a database exists in InfluxDB \n
+
+    Args:
+        db_client (InfluxDBClient): A valid instance of \
+            influxdb.InfluxDBClient or influxdb.DataFrameClient \n
+        database (str): Name of the DB to hit with queries. \n
+
+    Returns:
+        bool: True if the database exists in InfluxDB. False otherwise.
+    """
+
+    # Check inputs
+    assert isinstance(db_client, InfluxDBClient) or isinstance(db_client, DataFrameClient)
+    assert isinstance(database, str)
+
+    # Get a list of active databases in InfluxDB
+    query_response = db_client.query("SHOW DATABASES").raw['series'][0]['values']
+    active_dbs = [db[0] for db in query_response]
+
+    return(database in active_dbs)
+
+
 def build_dataset(db_client, var_list, start_time,
                   end_time, window_size="15m"):
     """
     Hit the modelling database and build a dataset.
 
     Args:
-        db_client (DataFrameClient): A valid instance of \
-            influxdb.DataFrameClient \n
+        db_client (InfluxDBClient): A valid instance of \
+            influxdb.InfluxDBClient or influxdb.DataFrameClient \n
         var_list (list): A list of field names to query. \
             See bigforecast.list_series \n
         start_time (str): A date string of the form "2017-08-01T10:00:00Z", \
@@ -74,7 +112,7 @@ def build_dataset(db_client, var_list, start_time,
     """
 
     # Check inputs
-    assert isinstance(db_client, DataFrameClient)
+    assert isinstance(db_client, InfluxDBClient) or isinstance(db_client, DataFrameClient)
     assert isinstance(var_list, list)
     assert isinstance(start_time, str)
     assert isinstance(end_time, str)
@@ -130,7 +168,6 @@ def train_model(trainDF, dep_var, model_type="ARIMA"):
     assert isinstance(model_type, str)
 
     # Train model
-    model_
 
     # TODO (jaylamb20@gmail.com): actually write this
     pass

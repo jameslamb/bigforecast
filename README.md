@@ -14,7 +14,10 @@
     5. [Configuring and Starting Elasticsearch](#elasticsearch)
     6. [Configuring and Starting InfluxDB](#influx)
 5. [Running the App](#running)
-    1. [Monitoring Elasticsearch](#monitorelastic)
+    1. [Kicking off Macro Ingestion](#ingestion)
+    2. [Kicking off GDELT Ingestion](#ingestion)
+    3. [Monitoring Kafka](#monitorkafka)
+    4. [Monitoring Elasticsearch](#monitorelastic)
 6. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 
@@ -344,6 +347,88 @@ systemctl status influxdb
 ```
 
 ## Running the App <a name="running"></a>
+
+### Kicking Off Macro Ingestion <a name="macro"></a>
+
+If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB.
+
+To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/kafka`. Ingestion of macro data relies on a tiny config file stored at `kafka/macro_config.json`. This has three fields:
+
+- `influx_host` = A string with the IP address of the box you are running InfluxDB on
+- `modeldb` = A string with the name of the database inside InfluxDB that you want to write data to
+- `tickers` = An array of strings with valid ticker symbols from [Yahoo Finance](https://finance.yahoo.com/lookup/)
+
+Once you've edited this config to your liking, kick off ingestion by running the following commands:
+
+```
+cd $HOME/bigforecast/kafka
+source activate bigforecast
+nohup ./macro_producer.py &
+```
+
+If you get errors like "command not found", be sure that the producer script is executable:
+
+```
+chmod a+rwx macro_producer.py
+```
+
+You can run the following to check that this is running without error:
+
+```
+tail nohup.out
+```
+
+Once this has been running for a while, you can run the following code (in Python) or something similar to check that the data are being written to InfluxDB
+
+```
+from influxdb import DataFrameClient
+import bigforecast.influx as bgfi
+import json
+import pandas as pd
+
+# Read in and parse the config
+with open('macro_config.json', 'r') as f:
+    db_info = json.loads(f.read())
+
+DBNAME = db_info["model_db"]
+HOST = db_info["influx_host"]
+
+# Connect to influx with the DataFrameClient
+influxDB = bgfi.db_connect(host=HOST, database=DBNAME, client_type = "dataframe")
+
+# List series in the DB
+response = influxDB.query("SHOW MEASUREMENTS")
+print(response.raw)
+
+# Build a sample dataset
+query_string = "SELECT mean(value) from aapl, goog " + \
+               "WHERE time > '2017-08-19T00:00:00Z' " + \
+               "GROUP BY time(15s)"
+
+result = influxDB.query(query_string)
+
+# Parse into a list of DataFrames, change column names
+df_list = []
+for name in series_names:
+  thisDF = result[name]
+  thisDF.columns = [name]
+  df_list.append(thisDF)
+
+# Join the results
+trainDF = df_list[0]
+if len(df_list) > 1:
+  for nextDF in df_list[1:]:
+    trainDF = trainDF.join(nextDF)
+
+# Print the results
+trainDF
+```
+
+Congratulations! Your macro/finance data ingestion is up and running!
+
+### Kicking Off GDELT Ingestion <a name="monitorkafka"></a>
+
+Notes coming soon
 
 ### Monitoring Kafka <a name="monitorkafka"></a>
 
