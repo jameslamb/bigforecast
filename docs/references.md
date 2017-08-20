@@ -20,6 +20,7 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [Heap Size in Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html)
 4. [Important Config Changes](https://www.elastic.co/guide/en/elasticsearch/guide/1.x/_important_configuration_changes.html)
 5. [elasticsearch-head UI](https://github.com/mobz/elasticsearch-head)
+6. [The 'date' datatype in Elasticsearch(https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html)
 
 ## InfluxDB <a name="influxdb"></a>
 
