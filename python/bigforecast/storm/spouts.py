@@ -15,9 +15,10 @@ class KafkaArticleSpout(Spout):
     def initialize(self, stormconf, context):
 
         # Set up the consumer
+        self.log("Connecting to the Kafka consumer")
         self.consumer = KafkaConsumer('GDELT_articles',
                          bootstrap_servers='kafka1:9092')
-
+        self.log("Connected to the Kafka consumer")
     def next_tuple(self):
         msg = next(self.consumer)
         self.log("Pulled msg off Kafka que: " + str(msg))
