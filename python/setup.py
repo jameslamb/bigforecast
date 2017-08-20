@@ -24,6 +24,5 @@ setuptools.setup(name='bigforecast',
                     'all': normal_packages + documentation_packages,
                     'docs': documentation_packages
                  },
-                 zip_safe=False,
-                 include_package_data=True
+                 zip_safe=False
                  )

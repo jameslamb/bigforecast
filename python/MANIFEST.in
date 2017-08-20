@@ -1,2 +1,0 @@
-include gdelt/feature_names.txt
-include *.txt

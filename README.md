@@ -453,7 +453,26 @@ Congratulations! Your macro/finance data ingestion is up and running!
 
 ### Kicking Off GDELT Ingestion <a name="monitorkafka"></a>
 
-Notes coming soon
+Ultimately, GDELT article data will be written to Elasticsearch. It is important to set up the index we'll sink article to **before** writing data there, to ensure that Elasticsearch lays the correct schema on the data. If this is not done, we may not be able to do the types of aggregation and filtering required to build the datasets we want.
+
+Log in to `elasticsearch1` and run the following to create the index:
+
+```
+cd $HOME/bigforecast/elasticsearch
+curl -X PUT "elasticsearch1:9200/news" -d @gdelt_mapping.json
+```
+
+If this worked correctly, you should see `news` listed when running this command:
+
+```
+curl -X GET elasticsearch1:9200/_cat/indices
+```
+
+The output will look something like this:
+
+```
+green open news yKmJKWOGRqWWFqRdIYW_Ig 5 1 1024 26 18.4mb 9.1mb
+```
 
 ### Monitoring Kafka <a name="monitorkafka"></a>
 
