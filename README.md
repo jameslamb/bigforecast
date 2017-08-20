@@ -5,16 +5,17 @@
 # Table of contents
 1. [Introduction](#introduction)
 2. [Architecture](#architecture)
-3. [Installation and Configuration](#installation)
+3. [Repo Structure](#repo)
+4. [Installation and Configuration](#installation)
     1. [Provisioning Your Cluster](#provisioning)
     2. [Setting up SSH Access](#ssh)
     3. [Installing Dependencies](#deps)
     4. [Configuring and Starting Kafka](#kafka)
     5. [Configuring and Starting Elasticsearch](#elasticsearch)
     6. [Configuring and Starting InfluxDB](#influx)
-4. [Running the App](#running)
+5. [Running the App](#running)
     1. [Monitoring Elasticsearch](#monitorelastic)
-5. [Data Sources](#datasources)
+6. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 
 ## Introduction <a name="introduction"></a>
@@ -31,6 +32,34 @@ The goal of this project is to create an automated system which produces near-te
 * `InfluxDB` - Time series database, used as a short-term store for the data used by our forecasting model. High-frequency data are written to this database and the modeling / validation code uses aggregation queries to test different windowed features.
 
 ![Diagram](bigforecast.png)
+
+## Repo Structure <a name="repo"></a>
+
+This repository is kind of big. Before moving on with installation, review this section to get a sense of what lives in each directory.
+
+- `docs/`
+  - Project documentation that is more detailed than this `README`. This is mostly informational and not strictly necessary to building the project.
+- `elasticsearch/`
+  - config files for Elasticsearch. 
+  - This directory also includes an [Elasticsearch mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html) for the index we use to hold GDELT articles.
+- `influxdb/`
+  - config files for InfluxDB
+- `kafka/`
+  - config files for Kafka
+  - Kafka producers that create streams of ingested data
+- `python`
+  - YAML file with deps for the conda env the entire project is running in
+  - Python package with the project source code
+- `sandbox`
+  - a dumping ground for random exploratory code that is not a part of actually building an instance of the project. This is a place for miscellaneous little scripts and noteboos
+- `setup`
+  - setup script to be run on each fresh VM. This script will install all major dependencies and overwrite their default configs with those in this repo
+  - this directory also contains information like a `hosts` file to match IPs to more friendly host names
+- `storm`
+  - config files for Storm
+  - Storm topologies. Most of the logic for Spouts/Bolts are defined inside the project Python package. The code in this directory is more about scaling and orchestration
+- `ui`
+  - project front-end code. As of this writing, the "front end" is a Jupyter notebook that can hit the underlying data sources, create a custom dataset, run a model, and produce predictions
 
 ## Installation and Configuration <a name="installation"></a>
 
