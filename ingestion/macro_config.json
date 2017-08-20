@@ -1,6 +1,8 @@
 {
   "influx_host": "198.11.200.86",
   "model_db": "modeldb",
+  "backfill_start": "2000-01-01",
+  "backfill_end": null,
   "tickers": [
     "uso",
     "cad",
