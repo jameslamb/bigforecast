@@ -14,15 +14,15 @@ def article_to_dict(a):
     return a_dict
 
 
-def load_article(a, es, i):
-    es.index(index = "news",
+def load_article(a, es, i, index="news"):
+    es.index(index = index,
              doc_type="article",
              id = i,
              body = a)
 
 
 def process_article(url):
-    a = Article(url)
+    a = Article(url, request_timeout = 3)
     a.download()
     a.parse()
     a.nlp()
