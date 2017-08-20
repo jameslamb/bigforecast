@@ -15,14 +15,17 @@ class KafkaArticleSpout(Spout):
     def initialize(self, stormconf, context):
 
         # Set up the consumer
-        self.consumer = KafkaConsumer('package_metadata',
-                         bootstrap_servers='localhost:9092')
+        self.consumer = KafkaConsumer('GDELT_articles',
+                         bootstrap_servers='kafka1:9092')
 
     def next_tuple(self):
         msg = next(self.consumer)
-        msg_dict = json.loads(msg.value)
-        out_tuple = (msg_dict['package'].encode('utf-8'), msg_dict['description'].encode('utf-8'))
+        self.log("Pulled msg off Kafka que: " + str(msg))
+        msg_dict = json.loads(msg)
+        out_tuple = []
+        out_tuple.append(json.dumps(msg_dict))
         self.emit(out_tuple)
+
 
     def ack(self, tup_id):
         pass  # if a tuple is processed properly, do nothing

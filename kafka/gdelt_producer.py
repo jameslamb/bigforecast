@@ -42,7 +42,7 @@ while True:
 
             # Parse through all the events in the file and put them onto
             # the "GDELT_articles" Kafka topic
-            events = bgf.gdelt.split_v2_GDELT(out_name)
+            events = bgf.gdelt.split_v2_GDELT(json.dumps(out_name))
             for event in events:
                 #GDELT_producer.send("GDELT_articles", event)
                 sys.stdout.write(str(event))
