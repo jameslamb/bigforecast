@@ -184,7 +184,7 @@ To confirm that this worked, run
 
 ```
 cat nohup.out
-``
+```
 
 You should see something like this:
 
