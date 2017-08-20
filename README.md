@@ -431,7 +431,7 @@ import bigforecast.influx as bgfi
 
 
 # Connect to the DB
-influxDB = bgfi.db_connect(host="169.53.56.26",
+influxDB = bgfi.db_connest(host="169.53.56.26",
                            database="modeldb",
                            client_type="dataframe")
 
@@ -486,3 +486,7 @@ To monitor Elasticsearch while the app is running, we recommend using [elasticse
 ### GDELT <a name="gdelt">
 
 The [GDELT 2.0 Event Database](https://blog.gdeltproject.org/gdelt-2-0-our-global-world-in-realtime/) serves as our source of global, potentially market-moving news. In this project, we consume the stream of events coming into `GDELT 2.0` and index them into Elasticsearch. We then use ES queries to create time series feature vectors from the news stories. Detail on the fields available in this dataset can be found in the [GDELT 2.0 Event Database Codebook](http://data.gdeltproject.org/documentation/GDELT-Event_Codebook-V2.0.pdf).
+
+### Yahoo Finance <a name="yahoofinance"></a>
+
+This project relies on macroecomonic and financial time series from [Yahoo Finance](https://finance.yahoo.com/), fetched with the [yahoo-finance Python package](https://github.com/lukaszbanasiak/yahoo-finance). Macro ingestion is treated as a batch process and, for financial time series, is limited to trading days and times when markets are open.
