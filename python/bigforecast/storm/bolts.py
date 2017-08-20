@@ -29,7 +29,6 @@ class ScraperBolt(Bolt):
             article = npu.process_article(article_data["SOURCEURL"])
             out_tup = (tup.values[0], json.dumps(article))
             self.emit(out_tup)
-            self.log("Emitted tuple: " + str(article_data["SOURCEURL"]))
         except Exception as e:
             self.log("Failed parsing article: " +  article_data["SOURCEURL"] + str(e))
 
@@ -72,7 +71,7 @@ class ESLoaderBolt(Bolt):
 
         try:
             npu.load_article(article, self.es, article["GlobalEventID"], index = "test")
-            #self.log("Loaded Article: " + str(article["GlobalEventID"]) + ": " +  article["title"])
+            self.log("Loaded Article: " + str(article["GlobalEventID"]) + ": " +  article["title"])
         except Exception as e:
             self.log(str(e))
-            #self.log("Failed to load article into ES:", article["title"])
+            self.log("Failed to load article into ES:", article["title"])

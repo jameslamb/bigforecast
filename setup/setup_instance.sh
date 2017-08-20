@@ -234,6 +234,9 @@ if ! type "storm" &> /dev/null; then
     mkdir $HOME/bin/apache-storm-1.1.0/data && \
     rm -rf apache-storm-1.1.0.tar.gz
 
+    # Move custom storm config file into storm directory
+    mv $HOME/bigforecast/storm/storm.yaml $HOME/bin/apache-storm-1.1.0/conf/storm.yaml
+
     # Add directories for Storm data and logs
     sudo mkdir -p /data/storm/data
     sudo mkdir -p /data/storm/logs
@@ -297,11 +300,15 @@ fi
     cd $HOME/bigforecast/python && \
     $CONDA_ENV_ALIAS create -n bigforecast -f bigforecast.yml && \
     sudo $CONDA_PYTHON setup.py install
-    
+
     # Install bigforecast python package into that environment
     cd $HOME/bigforecast/python && \
     source $ACTIVATE_ALIAS bigforecast && \
     sudo $CONDA_PYTHON setup.py install && \
+
+    # Download nltk information for Article
+    python -m nltk.downloader all
+
     source $DEACTIVATE_ALIAS
 
     # Add bigforecast package to PYTHONPATH to be super sure
@@ -311,7 +318,7 @@ fi
 ##############
 ## InfluxDB ##
 ##############
-    
+
     # Install influxDB
     sudo yum install -y influxdb
 
