@@ -148,16 +148,15 @@ fi
 ######################
 
 # Create Directory
-if [ ! -d "~/.jupyter"]; then
+if [ ! -d "$HOME/jupyter"]; then
     mkdir ~/.jupyter
 fi
 
 # Move files
 echo "Setting up Jupyter Notebook web connections"
-cd $HOME/bigforecast/setup &&  \
-    mv jupyter/mycert.pem ~/.jupyter/mycert.pem &&   \
-    mv jupyter/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py &&  \
-    cd $HOME
+sudo mv $HOME/bigforecast/ui/jupyter/mycert.pem $HOME/jupyter/mycert.pem && \
+sudo mv $HOME/bigforecast/ui/jupyter/jupyter_notebook_config.py $HOME/jupyter/jupyter_notebook_config.py && \
+cd $HOME
 
 echo "Completed Setting up Jupyter Notebook web connections"
 

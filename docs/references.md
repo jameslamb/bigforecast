@@ -50,7 +50,7 @@ This page is a dumping ground for links we found helpful throughout this process
 
 ## Python/Jupyter/Conda <a name="python"></a>
 
-1. [Jupyter Server](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html)
+1. [Running Jupyter Server from a Cloud VM](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html)
 
 ## Storm <a name="storm"></a>
 
