@@ -80,3 +80,7 @@ supervisor.slots.ports:
 #       - endpoint: "metrics-collector.mycompany.org"
 #
 # storm.cluster.metrics.consumer.publish.interval.secs: 60
+nimbus.task.timeout.secs: 1200
+nimbus.supervisor.timeout.secs: 1200
+nimbus.monitor.freq.secs: 1200
+supervisor.worker.timeout.secs: 1200
