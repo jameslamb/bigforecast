@@ -51,6 +51,9 @@ This page is a dumping ground for links we found helpful throughout this process
 
 ## Other <a name="other"></a>
 
+1. [Stock Market Status API (check if a given market is open)](https://www.stockmarketclock.com/stock-market-api)
+2. [Unix Epoch Convert (web calculator)](https://www.epochconverter.com/)
+
 ## Python/Jupyter/Conda <a name="python"></a>
 
 1. [Running Jupyter Server from a Cloud VM](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html)
@@ -58,6 +61,13 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [yahoo-finance module](https://github.com/lukaszbanasiak/yahoo-finance)
 4. [Dropping NAs in Pandas](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.dropna.html)
 5. [About the Jupyter Project](http://jupyter.org/about.html)
+6. [A curated list of insanely awesome libraries, packages and resources for Quants (Quantitative Finance)](https://github.com/wilsonfreitas/awesome-quant)
+7. [Interpolating and Upsampling Timeseries Data with Pandas](http://machinelearningmastery.com/resample-interpolate-time-series-data-python/)
+8. [Pandas docs on resample() method for time series](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.resample.html)
+9. [(forum) Yahoo Finance Module - discontinued support for historical data](https://stackoverflow.com/questions/44753963/yahoo-finance-module-doesnt-work-anymore)
+10. [(forum) How to get around the issues with Yahoo Finance historical data](https://stackoverflow.com/a/44445027)
+11. [(forum) How to read a CSV string into a pandas DataFrame](https://stackoverflow.com/questions/22604564/how-to-create-a-pandas-dataframe-from-string)
+12. [Pandas read_csv docs](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html)
 
 ## Storm <a name="storm"></a>
 

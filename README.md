@@ -353,7 +353,7 @@ systemctl status influxdb
 
 ### Kicking Off Macro Ingestion <a name="macro"></a>
 
-If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB.
+If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB. Note that this script will only pull data if the New York Stock Exchange is open. You could use [this super cool API](https://www.stockmarketclock.com/stock-market-api) to check that but it costs money.
 
 To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/ingestion`. Ingestion of macro data relies on a tiny config file stored at `ingestion/macro_config.json`. This has three fields:
 
