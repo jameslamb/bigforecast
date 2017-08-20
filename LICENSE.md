@@ -1,6 +1,6 @@
 ## LICENSE
 
-Copyright 2017 James Lamb, Chris Hipple, Yannie Lee
+Copyright 2017 Project Authors
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
