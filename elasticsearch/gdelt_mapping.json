@@ -6,7 +6,7 @@
           "type": "keyword"
         },
         "ActionGeo_CountryCode": {
-          "type": "keywrod"
+          "type": "keyword"
         },
         "ActionGeo_FeatureID": {
           "type": "keyword"
