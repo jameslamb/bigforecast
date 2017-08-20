@@ -18,6 +18,7 @@
     2. [Kicking off GDELT Ingestion](#ingestion)
     3. [Monitoring Kafka](#monitorkafka)
     4. [Monitoring Elasticsearch](#monitorelastic)
+    5. [Starting the UI](#jupyter)
 6. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 
@@ -499,6 +500,21 @@ From that point forward, just follow the instructions in the [kafka-manager READ
 ### Monitoring Elasticsearch <a name="monitorelastic"></a>
 
 To monitor Elasticsearch while the app is running, we recommend using [elasticsearch-head](https://github.com/mobz/elasticsearch-head). You can install the app [as a Chrome extension](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm/), enter the relevant hostname and port in the box at the top, and you're on your way!
+
+### Starting the UI <a name="jupyter"></a>
+
+The UI for this project is a [jupyter notebook](http://jupyter.org/about.html) with some simple Python code to explore the available data, build a training dataset, train a model, and examine model outputs. All the configuration for this notebook is handled by `setup/setup_instance.sh`, closely following [this tutorial](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html).
+
+To start up the notebook, log in to `modelbox` and run the following:
+
+```
+cd $HOME/bigforecast/ui
+nohup jupyter notebook bigforecast.ipynb &
+```
+
+To run/view the notebook, navigate `<IP>:8888` in Google Chrome, where `<IP>` is the public IP address for `modelbox`. The notebook runs a kernel built from the [bigforecast conda env](https://github.com/jameslamb/bigforecast/blob/dev/python/bigforecast.yml), so you do not need to worry about installing any additional dependencies.
+
+From this point, you should be able to run / change the code and play with the data!
 
 ## Data Sources <a name="datasources"></a>
 

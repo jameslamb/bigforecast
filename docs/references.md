@@ -57,6 +57,7 @@ This page is a dumping ground for links we found helpful throughout this process
 2. [Getting Current Time in UTC](https://stackoverflow.com/questions/4548684/how-to-get-the-seconds-since-epoch-from-the-time-date-output-of-gmtime-in-py)
 3. [yahoo-finance module](https://github.com/lukaszbanasiak/yahoo-finance)
 4. [Dropping NAs in Pandas](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.dropna.html)
+5. [About the Jupyter Project](http://jupyter.org/about.html)
 
 ## Storm <a name="storm"></a>
 
@@ -64,6 +65,7 @@ This page is a dumping ground for links we found helpful throughout this process
 2. [Download Mirror for Storm](http://www.apache.org/dyn/closer.lua/storm/apache-storm-1.1.0/apache-storm-1.1.0.tar.gz)
 3. [Installing leiningren for Storm](https://leiningen.org/#install)
 4. [Setting LEIN_ROOT so it installs without interaction](https://stackoverflow.com/questions/41517353/where-to-set-lein-root)
+5. [Timeout and Bolt Heartbeat Issues](https://www.linkedin.com/pulse/heartbeat-issue-apache-storm-chandan-prakash)
 
 ## Zookeeper <a name="zookeeper"></a>
 
