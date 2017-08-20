@@ -378,7 +378,7 @@ You can run the following to check that this is running without error:
 tail nohup.out
 ```
 
-Once this has been running for a while, you can run the following code (in Python) or something similar to check that the data are being written to InfluxDB
+Once this has been running for a while, you can run something like the example Python code below to check that the data are being written to InfluxDB
 
 ```
 from influxdb import DataFrameClient
@@ -409,7 +409,7 @@ result = influxDB.query(query_string)
 
 # Parse into a list of DataFrames, change column names
 df_list = []
-for name in series_names:
+for name in result.keys():
   thisDF = result[name]
   thisDF.columns = [name]
   df_list.append(thisDF)
@@ -421,6 +421,31 @@ if len(df_list) > 1:
     trainDF = trainDF.join(nextDF)
 
 # Print the results
+trainDF
+```
+
+In the example above, we exposed a lot of the lower-level details for maximum debuggability. If you just want to play with data and not worry about the details, you could do this:
+
+```
+import bigforecast.influx as bgfi
+
+
+# Connect to the DB
+influxDB = bgfi.db_connect(host="169.53.56.26",
+                           database="modeldb",
+                           client_type="dataframe")
+
+# Get a windowed dataset
+trainDF = bgfi.build_dataset(db_client=influxDB,
+                             var_list=['aapl', 'goog', 'cad', 'uso'],
+                             start_time='2017-08-19 18:00:00',
+                             end_time='2017-08-22',
+                             window_size='30s')
+
+# Drop NAs in the resulting DataFrame
+trainDF = trainDF.dropna(axis=0, how='any')
+
+# Let's take a look
 trainDF
 ```
 

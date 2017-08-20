@@ -95,7 +95,7 @@ def build_dataset(db_client, var_list, start_time,
     Args:
         db_client (InfluxDBClient): A valid instance of \
             influxdb.InfluxDBClient or influxdb.DataFrameClient \n
-        var_list (list): A list of field names to query. \
+        var_list (list): A list of measurement names to query. \
             See bigforecast.list_series \n
         start_time (str): A date string of the form "2017-08-01T10:00:00Z", \
             indicating the earliest date from which to return data. \n
@@ -125,23 +125,85 @@ def build_dataset(db_client, var_list, start_time,
     response = db_client.query(query_body)
 
     # Return a pandas DF
-    return(response.raw)
+    return(_response_to_dataframe(response))
 
 
-def _make_query(var_list, table_name, start_time, end_time, window_size):
+def _make_query(var_list, start_time, end_time, window_size):
     """
-    Create a valid InfluxDB query. See docs for bigforecast.build_dataset.
+    Create a valid InfluxDB aggregation query. See docs for \
+    bigforecast.build_dataset. This function assumes that \
+    the desired output is a set of windowed means of several \
+    measurements. \n
+
+    Args:
+        var_list (list): A list of measurement names to query. \
+            See bigforecast.list_series \n
+        start_time (str): A date string of the form "2017-08-01T10:00:00Z", \
+            indicating the earliest date from which to return data. \n
+        end_time (str): A date string of the form "2017-08-01T10:00:00Z", \
+            indicating the most recent date from which to return data. \n
+        window_size (str): A valid duration string indicating the granularity \
+            of the resulting dataset. This will be like "15m" for \
+            15-minute windows, "2h" for 2-hour windows, etc. See \
+            https://docs.influxdata.com/influxdb/v0.8/api/aggregate_functions/ \
+            for more. \n
+
+    Returns:
+        str: A query to send to InfluxDB \n
     """
 
     # Check inputs
     assert isinstance(var_list, list)
-    assert isinstance(table_name, str)
     assert isinstance(start_time, str)
     assert isinstance(end_time, str)
     assert isinstance(window_size, str)
 
-    # TODO (jaylamb20@gmail.com): actually write this
-    pass
+    # Set up a template to fill in
+    template = "SELECT mean(value) " +\
+               "FROM {fields} " + \
+               "WHERE time > \'{gte}\' AND time < \'{lte}\' " +\
+               "GROUP BY time({window})"
+
+    # Build query string
+    query_string = template.format(fields=",".join(var_list),
+                                   gte=start_time,
+                                   lte=end_time,
+                                   window=window_size)
+
+    return(query_string)
+
+
+def _response_to_dataframe(response):
+    """
+    Given a response from the InfluxDB DataFrameClient, \
+    merge the resulting DFs and give back a single DataFrame. \
+    Note that this function assumes that you have issued \
+    a query only for the mean of each measurement and that \
+    your query used "GROUP BY time()" syntax. \n
+
+    Args:
+        response: A response from a query sent by an instance \
+            of influxdb.DataFrameClient \n
+
+    Returns:
+        DataFrame: A single pandas DataFrame representation of \
+            the result. \n
+    """
+
+    # Parse into a list of DataFrames, change column names
+    df_list = []
+    for name in response.keys():
+        thisDF = response[name]
+        thisDF.columns = [name]
+        df_list.append(thisDF)
+
+    # Join the results (each DF will have a dateTimeIndex already)
+    outDF = df_list[0]
+    if len(df_list) > 1:
+        for nextDF in df_list[1:]:
+            outDF = outDF.join(nextDF)
+
+    return(outDF)
 
 
 # TODO (jaylamb20@gmail.com): move this out of influx section of
