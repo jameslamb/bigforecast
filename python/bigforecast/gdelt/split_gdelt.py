@@ -1,6 +1,5 @@
 
 import pandas as pd
-import pkg_resources
 
 
 def extract_fields(row):
@@ -17,6 +16,71 @@ def extract_fields(row):
     return dict(row[cols_to_keep])
 
 
+# Global var with list of names in GDELT results
+GDELT_COLS = [
+    "GlobalEventID",
+    "Day",
+    "MonthYear",
+    "Year",
+    "FractionDate",
+    "Actor1Code",
+    "Actor1Name",
+    "Actor1CountryCode",
+    "Actor1KnownGroupCode",
+    "Actor1EthnicCode",
+    "Actor1Religion1Code",
+    "Actor1Religion2Code",
+    "Actor1Type1Code",
+    "Actor1Type2Code",
+    "Actor1Type3Code",
+    "Actor2Code",
+    "Actor2Name",
+    "Actor2CountryCode",
+    "Actor2KnownGroupCode",
+    "Actor2EthnicCode",
+    "Actor2Religion1Code",
+    "Actor2Religion2Code",
+    "Actor2Type1Code",
+    "Actor2Type2Code",
+    "Actor2Type3Code",
+    "IsRootEvent",
+    "EventCode",
+    "EventBaseCode",
+    "EventRootCode",
+    "QuadClass",
+    "GoldsteinScale",
+    "NumMentions",
+    "NumSources",
+    "NumArticles",
+    "AvgTone",
+    "Actor1Geo_Type",
+    "Actor1Geo_Fullname",
+    "Actor1Geo_CountryCode",
+    "Actor1Geo_ADM1Code",
+    "Actor1Geo_ADM2Code",
+    "Actor1Geo_Lat",
+    "Actor1Geo_Long",
+    "Actor1Geo_FeatureID",
+    "Actor2Geo_Type",
+    "Actor2Geo_Fullname",
+    "Actor2Geo_CountryCode",
+    "Actor2Geo_ADM1Code",
+    "Actor2Geo_ADM2Code",
+    "Actor2Geo_Lat",
+    "Actor2Geo_Long",
+    "Actor2Geo_FeatureID",
+    "ActionGeo_Type",
+    "ActionGeo_Fullname",
+    "ActionGeo_CountryCode",
+    "ActionGeo_ADM1Code",
+    "ActionGeo_ADM2Code",
+    "ActionGeo_Lat",
+    "ActionGeo_Long",
+    "ActionGeo_FeatureID",
+    "DATEADDED",
+    "SOURCEURL"
+]
+
 def split_v2_GDELT(update_file):
     """
     This function reads a GDELT CSV file and parses each row \
@@ -29,17 +93,12 @@ def split_v2_GDELT(update_file):
         An iterable object with one event/article per item. \n
     """
 
-    # Get ordered list of column names
-    with open(pkg_resources.resource_filename("bigforecast", "gdelt/feature_names.txt"), "r") as f:
-        cols = f.readlines()
-    cols = list(map(lambda s: s.replace("\n", ""), cols))
-
     # Read in the CSV with GDELT events 2.0 data
     gdeltDF = pd.read_csv(update_file,
                           sep="\t",
                           header=None,
                           compression="zip",
-                          names=cols)
+                          names=GDELT_COLS)
 
     # Convert Dates to proper date strings
     gdeltDF['timestamp'] = gdeltDF['DATEADDED'].apply(_format_gdelt_date)
