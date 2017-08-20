@@ -48,14 +48,16 @@ This repository is kind of big. Before moving on with installation, review this 
   - This directory also includes an [Elasticsearch mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html) for the index we use to hold GDELT articles.
 - `influxdb/`
   - config files for InfluxDB
+- `ingestion/`
+  - scripts that ingest data from the outside world into the system
+  - configs for those scripts
 - `kafka/`
   - config files for Kafka
-  - Kafka producers that create streams of ingested data
 - `python`
   - YAML file with deps for the conda env the entire project is running in
   - Python package with the project source code
 - `sandbox`
-  - a dumping ground for random exploratory code that is not a part of actually building an instance of the project. This is a place for miscellaneous little scripts and noteboos
+  - a dumping ground for random exploratory code that is not a part of actually building an instance of the project. This is a place for miscellaneous little scrsipts and noteboos
 - `setup`
   - setup script to be run on each fresh VM. This script will install all major dependencies and overwrite their default configs with those in this repo
   - this directory also contains information like a `hosts` file to match IPs to more friendly host names
@@ -353,7 +355,7 @@ systemctl status influxdb
 
 If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB.
 
-To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/kafka`. Ingestion of macro data relies on a tiny config file stored at `kafka/macro_config.json`. This has three fields:
+To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/ingestion`. Ingestion of macro data relies on a tiny config file stored at `ingestion/macro_config.json`. This has three fields:
 
 - `influx_host` = A string with the IP address of the box you are running InfluxDB on
 - `modeldb` = A string with the name of the database inside InfluxDB that you want to write data to
@@ -362,7 +364,7 @@ To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/kafka`. Ingesti
 Once you've edited this config to your liking, kick off ingestion by running the following commands:
 
 ```
-cd $HOME/bigforecast/kafka
+cd $HOME/bigforecast/ingestion
 source activate bigforecast
 nohup ./macro_producer.py &
 ```
