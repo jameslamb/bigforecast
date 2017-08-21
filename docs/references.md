@@ -75,6 +75,8 @@ This page is a dumping ground for links we found helpful throughout this process
 12. [Pandas read_csv docs](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html)
 13. [(forum) Dropping Pandas rows with duplicate index values in](https://stackoverflow.com/questions/13035764/remove-rows-with-duplicate-indices-pandas-dataframe-and-timeseries)
 14. [How to coerce a Pandas series to numeric, NaN-ing the non-numeric stuff](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_numeric.html)
+15. [Fitting an ARIMA model with exogenous regressors in Python](https://stackoverflow.com/questions/25044165/python-arima-exogenous-variable-out-of-sample)
+16. [Fitting a VAR model in Python](http://www.statsmodels.org/dev/vector_ar.html)
 
 ## Storm <a name="storm"></a>
 

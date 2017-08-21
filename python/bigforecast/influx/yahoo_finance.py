@@ -51,7 +51,7 @@ def get_historical_data(ticker_symbol, retries=5, sleep_time=30):
 
     # Go get the data from Yahoo. May have to try a few times
     retry_count = 0
-    while True:
+    while retry_count < retries:
         try:
             # Re-request cookie info
             cookie_tuple = _get_yahoo_crumb_cookie()
@@ -68,7 +68,11 @@ def get_historical_data(ticker_symbol, retries=5, sleep_time=30):
 
             # Get data
             response = requests.get(url_price, cookies={'B': cookie_tuple[0]})
-            break
+
+            if response.status_code == 200:
+                break
+            else:
+                retry_count += 1
         except Exception as e:
             if retry_count < retries:
                 print("Hit error {}. Waiting for {} seconds.".format(e, sleep_time))
