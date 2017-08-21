@@ -508,6 +508,22 @@ The output will look something like this:
 green open news yKmJKWOGRqWWFqRdIYW_Ig 5 1 1024 26 18.4mb 9.1mb
 ```
 
+Log into a storm node and star storm.
+
+```
+source activate bigforecast
+cd ~/bigforecast/storm
+sparse run
+```
+
+Log into the ingestion box and start the GDELT producer
+
+```
+source activate bigforecast
+cd ~/bigforecast/ingestion
+./gdelt_producer.py
+```
+
 ### Monitoring Kafka <a name="monitorkafka"></a>
 
 Our preferred Kafka monitoring tool is Yahoo's [kafka-manager](https://github.com/yahoo/kafka-manager). We've decided not to include it in `setup/setup_instance.sh` but this section details how to install it if you want to do so. After completing the steps detailed in the **Installing Kafka** section, log in to `kafka1` and grab the project repo:
