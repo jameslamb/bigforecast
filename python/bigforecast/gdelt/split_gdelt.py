@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import sys
+import numpy as np
 
 
 def extract_fields(row):
@@ -104,6 +105,7 @@ def split_v2_GDELT(update_file):
     # Convert Dates to proper date strings
     gdeltDF['timestamp'] = gdeltDF['DATEADDED'].apply(_format_gdelt_date)
 
+
     # Return a list of rows (one per article)
     return list(gdeltDF.apply(extract_fields, 1))
 
@@ -115,10 +117,9 @@ def _format_gdelt_date(date_num):
     """
 
     # Check inputs
-    try:
-        assert isinstance(date_num, int) or isinstance(date_num, float)
-    except:
-        sys.stdout.write("Unable to format date.\n\n")
+    assert isinstance(date_num, int) or \
+           isinstance(date_num, float) or \
+           isinstance(date_num, np.int64)
 
     # Convert to character
     date_str = str(int(date_num))
