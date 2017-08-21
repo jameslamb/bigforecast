@@ -34,7 +34,6 @@ while True:
 
     # Put the IDs and file URLs on the topic
     for file_info in gdelt_files:
-
         try:
             # Check if file has been downloaded previously
             if bgf.check_file_downloaded(file_info['url']):
@@ -45,8 +44,6 @@ while True:
             msg = "We have not processed {} yet! Pulling it...\n"
             sys.stdout.write(msg.format(file_info['url']))
 
-            # Log that we've parsed this file.
-            bgf.gdelt.log_file(file_info['url'])
 
             # Pull down the CSV from GDELT
             out_name = os.path.join('/tmp/', str(uuid.uuid4()) + '.zip')
@@ -60,6 +57,9 @@ while True:
                 #sys.stdout.write(str(event["SOURCEURL"]) + "\n")
 
             subprocess.call(["rm", out_name])
+
+            # Log that we've parsed this file.
+            bgf.gdelt.log_file(file_info['url'])
 
 
         except Exception as e:
