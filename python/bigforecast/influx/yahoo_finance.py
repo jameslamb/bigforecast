@@ -68,7 +68,7 @@ def get_historical_data(ticker_symbol, retries=5, sleep_time=30):
 
             # Get data
             response = requests.get(url_price, cookies={'B': cookie_tuple[0]})
-
+            break
         except Exception as e:
             if retry_count < retries:
                 print("Hit error {}. Waiting for {} seconds.".format(e, sleep_time))
