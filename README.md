@@ -18,7 +18,8 @@
     2. [Kicking off GDELT Ingestion](#ingestion)
     3. [Monitoring Kafka](#monitorkafka)
     4. [Monitoring Elasticsearch](#monitorelastic)
-    5. [Starting the UI](#jupyter)
+    5. [Monitoring Storm](#monitorstorm)
+    6. [Starting the UI](#jupyter)
 6. [Data Sources](#datasources)
     1. [GDELT](#gdelt)
 
@@ -183,13 +184,13 @@ Again, note that you should set a *DIFFERENT ID* (small integer) on each Kafka n
 Next, let's start up [Zookeeper](https://zookeeper.apache.org/) on each Kafka node. Zookeeper is a resource manager and it's super cool. Run the following command on all three Kafka nodes. Don't worry if you see some exceptions pop up initially...these should go away once all nodes join the cluster. In case you're wondering about this mysterious environment variable...we defined it in `setup/setup_instance.sh`.
 
 ```
-nohup $KAFKA_HOME/bin/zookeeper-server-start.sh $KAFKA_HOME/config/zookeeper.properties &
+nohup $KAFKA_HOME/bin/zookeeper-server-start.sh $KAFKA_HOME/config/zookeeper.properties > zookeeper.out &
 ```
 
 To confirm that this worked, run
 
 ```
-cat nohup.out
+cat zookeeper.out
 ```
 
 You should see something like this:
@@ -204,7 +205,7 @@ You should see something like this:
 All that's left now is to actually kick off our [Kafka brokers](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)! Do this on all three Kafka nodes:
 
 ```
-nohup $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties &
+nohup $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties > kafka.out &
 ```
 
 If, at any point, you need to stop Kafka and change something, run the following command on the relevant VM:
@@ -375,7 +376,7 @@ Once you've edited this config to your liking, kick off ingestion by running the
 ```
 cd $HOME/bigforecast/ingestion
 source activate bigforecast
-nohup ./macro_producer.py &
+nohup python -u ./macro_producer.py > macro_producer.txt &
 ```
 
 If you get errors like "command not found", be sure that the producer script is executable:
@@ -387,7 +388,7 @@ chmod a+rwx macro_producer.py
 You can run the following to check that this is running without error:
 
 ```
-tail nohup.out
+tail macro_producer.txt
 ```
 
 Once this has been running for a while, you can run something like the example Python code below to check that the data are being written to InfluxDB
@@ -474,7 +475,7 @@ To ingest historical data, first log in to `modelbox`. If you skipped the previo
 ```
 cd $HOME/bigforecast/ingestion
 source activate bigforecast
-./macro_backfill.py
+nohup python -u ./macro_backfill.py > macro.out &
 ```
 
 Just keep an eye on this as it runs, but if successful it will do all of the following for each of the tickers you've requested:
@@ -550,6 +551,26 @@ From that point forward, just follow the instructions in the [kafka-manager READ
 
 To monitor Elasticsearch while the app is running, we recommend using [elasticsearch-head](https://github.com/mobz/elasticsearch-head). You can install the app [as a Chrome extension](https://chrome.google.com/webstore/detail/elasticsearch-head/ffmkiejjmecolpfloofpjologoblkegm/), enter the relevant hostname and port in the box at the top, and you're on your way!
 
+### Monitoring Storm <a name="monitorstorm"></a>
+
+If asked, Storm will public cluster health metrics, logs, and other information to a web UI over port 8080 on whatever node you've set as [the Nimbus](https://www.tutorialspoint.com/apache_storm/apache_storm_cluster_architecture.htm). 
+
+To start up the UI, do the following:
+
+```
+cd $HOME/bin/apache-storm-1.1.0
+```
+
+Once this is done, you can navigate to `http://<NIMBUS_IP>:8080/`, where `<NIMBUS_IP>` is the public IP address of the Nimbus node, to see UI.
+
+Storm also offers a REST API you cant hit to get information on the state of the cluster that you can handle programmatically. See the [official documentation](http://storm.apache.org/releases/0.9.6/STORM-UI-REST-API.html) for the most up-to-date information, but it's pretty straightforward to use.
+
+For example, you can run the following to get back a basic status report on all nodes in the cluster:
+
+```
+curl -XGET "http://${NIMBUS_IP}:8080/api/v1/topology/summary"
+```
+
 ### Starting the UI <a name="jupyter"></a>
 
 The UI for this project is a [jupyter notebook](http://jupyter.org/about.html) with some simple Python code to explore the available data, build a training dataset, train a model, and examine model outputs. All the configuration for this notebook is handled by `setup/setup_instance.sh`, closely following [this tutorial](https://chrisalbon.com/jupyter/run_project_jupyter_on_amazon_ec2.html).
@@ -558,7 +579,7 @@ To start up the notebook, log in to `modelbox` and run the following:
 
 ```
 cd $HOME/bigforecast/ui
-nohup jupyter notebook bigforecast.ipynb &
+nohup jupyter notebook bigforecast.ipynb > jupyter.out &
 ```
 
 To run/view the notebook, navigate `<IP>:8888` in Google Chrome, where `<IP>` is the public IP address for `modelbox`. The notebook runs a kernel built from the [bigforecast conda env](https://github.com/jameslamb/bigforecast/blob/dev/python/bigforecast.yml), so you do not need to worry about installing any additional dependencies.

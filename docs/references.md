@@ -49,6 +49,7 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [Installing Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 4. [(forum) How to check if a variable is set in bash](http://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-)
 5. [(forum) Difference between defining variables with and without "export"](https://stackoverflow.com/questions/1158091/defining-a-variable-with-or-without-export)
+6. [(forum) Avoiding output buffering using nohup and python](https://stackoverflow.com/questions/12919980/nohup-is-not-writing-log-to-output-file)
 
 ## Other <a name="other"></a>
 
@@ -82,6 +83,9 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [Installing leiningren for Storm](https://leiningen.org/#install)
 4. [Setting LEIN_ROOT so it installs without interaction](https://stackoverflow.com/questions/41517353/where-to-set-lein-root)
 5. [Timeout and Bolt Heartbeat Issues](https://www.linkedin.com/pulse/heartbeat-issue-apache-storm-chandan-prakash)
+6. [Storm REST API](http://storm.apache.org/releases/0.9.6/STORM-UI-REST-API.html)
+7. [Running a multi-node Storm cluster](http://www.michael-noll.com/tutorials/running-multi-node-storm-cluster/)
+8. [Explaining the Storm Architecture](https://www.tutorialspoint.com/apache_storm/apache_storm_cluster_architecture.htm)
 
 ## Zookeeper <a name="zookeeper"></a>
 
