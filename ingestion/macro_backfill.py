@@ -4,9 +4,14 @@
 import datetime
 import bigforecast.influx as bgfi
 import json
-from yahoo_finance import Share
+import pandas as pd
 import sys
 import time
+
+# Tiny function to get current time (for logging)
+def now():
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    return(current_time)
 
 # Read in and parse config. This acts as config
 # validation as well (since you will get a keyError if
@@ -14,80 +19,74 @@ import time
 with open('macro_config.json', 'r') as f:
     macro_config = json.loads(f.read())
 
-TICKERS = macro_config["tickers"]
+EQUITIES = [ticker.upper() for ticker in macro_config["equities"]]
+CURRENCIES = [currency.upper() for currency in macro_config["currencies"]]
+SYMBOLS = EQUITIES + CURRENCIES
 DBNAME = macro_config["model_db"]
 HOST = macro_config["influx_host"]
-BACKFILL_START = macro_config["backfill_start"]
-BACKFILL_END = macro_config["backfill_end"]
-
-# Figure out backfill_end date if not supplied.
-# Express below will return a date string of the
-# form "2017-08-21"
-if BACKFILL_END is None:
-    BACKFILL_END = str(datetime.datetime.now())[:10]
 
 # Create DB client
 influxDB = bgfi.db_connect(host=HOST, database=DBNAME, client_type="dataframe")
 
 # Create the DB if it doesn't exist yet
 if not bgfi.db_exists(influxDB, DBNAME):
-    msg = "Database {} does not exist in InfluxDB running at {}.\n Creating it.\n"
-    sys.stdout.write(msg.format(DBNAME, HOST))
+    msg = "[{}] Database {} does not exist in InfluxDB running at {}.\n Creating it.\n"
+    sys.stdout.write(msg.format(now(), DBNAME, HOST))
     influxDB.create_database(DBNAME)
 else:
-    msg = "Database {} already exists at {}! Not overwriting it.\n"
-    sys.stdout.write(msg.format(DBNAME, HOST))
-
-# Yahoo shut down support for the historical_data endpoint on its API
-# in June 2017. But you can get around it because fuck them:
-# https://stackoverflow.com/a/44050039
-response = requests.get("https://finance.yahoo.com/quote/AAPL/history")
+    msg = "[{}] Database {} already exists at {}! Not overwriting it.\n"
+    sys.stdout.write(msg.format(now(), DBNAME, HOST))
 
 # Pull a historical dataset for each series
-for ticker in TICKERS:
+# Currencies and symbols are pulled the same way
+for ticker in SYMBOLS:
 
-    msg = "Beginning backfill for {} from Yahoo Finance.\n"
+    msg = "[{}] Beginning backfill for {} from Yahoo Finance.\n"
+    sys.stdout.write(msg.format(now(), ticker))
 
-    # Get the historical dataset
-    histDF = bgfi.get_historical_data(ticker)
+    # Get the historical dataset. Note that extracting
+    # a single column from a pandas DataFrame will return
+    # a Series, not a 1-column DataFrame
+    sys.stdout.write("[{}] Pulling data...\n".format(now()))
+    hist_series = bgfi.get_historical_data(ticker)['Close']
+    sys.stdout.write("[{}] Returned dataset has {} observations.\n".format(now(), hist_series.shape[0]))
 
-    # Extract close price, ticker, date
+    # Make sure it is numeric
+    # Ref: http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_numeric.html
+    hist_series = pd.to_numeric(hist_series, errors = 'coerce')
 
-    # Interpolate to get a 5-minutely dataset
+    # Drop anything converted to NaN by the above
+    hist_series = hist_series.dropna(how="any")
 
-    # Format the points for upload to influxDB
+    # Rename 'Close' to the ticker symbol
+    hist_series.name = "value"
+
+    # Interpolate with a cubic spline to get a 5-minutely dataset
+    sys.stdout.write("[{}] Performing Imputation...\n".format(now()))
+    hist_series = hist_series.resample('300S').interpolate(method='spline', order=3)
+    sys.stdout.write("[{}] Resulting dataset has {} observations.\n".format(now(), hist_series.shape[0]))
+
+    # You have to query for currencies with a trailing "=X".
+    # Remove that before we write it.
+    measurement = ticker.replace('=X', '')
 
     # Upload to influxDB
-    influxDB.write_points([json_body])
-    sys.stdout.write("Done backfilling ")
+    sys.stdout.write("[{}] Writing to InfluxDB...\n".format(now()))
+    influxDB.write_points(dataframe=pd.DataFrame(hist_series),
+                          measurement=measurement,
+                          protocol="json",
+                          tags={"source": "Yahoo Finance",
+                                "ingestion_process": "backfill",
+                                "created_date": int(time.time())},
+                          batch_size=500)
 
+    # Clean up
+    del hist_series
 
-# Only run while the market is open
-while True:
+    sys.stdout.write("[{}] Done backfilling {}\n".format(now(), ticker))
 
-    # If the market is closed, sleep for a while
-    if 
-
-while (dt.hour == 9 & dt.minute > 30) | (dt.hour >10 & dt.hour < 16):
-
-    # Get prices and write them out to the DB
-    for ticker, yahoo_client in ticker_info.items():
-        try:
-            json_body = {"measurement": ticker,
-                         "tags": {
-                            "source": "Yahoo Finance"
-                         },
-                         "fields": {
-                            "value": round(float(yahoo_client.get_price()),6)
-                         }}
-
-            # Write to the DB
-            influxDB.write_points([json_body])
-        except Exception as e:
-            sys.stdout.write("macro_producer.py failed with error: {}\n".format(e))
-
-    # chill out for 1 minute
-    time.sleep(60)
+# We are done!
+sys.stdout.write("[{}] Done backfilling all symbols.\n".format(now()))
 
 
 # NOTE: Why are there no timestamps?

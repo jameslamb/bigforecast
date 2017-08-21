@@ -70,8 +70,9 @@ class ESLoaderBolt(Bolt):
                    **json.loads(tup.values[2])}
 
         try:
-            npu.load_article(article, self.es, article["GlobalEventID"], index = "test")
+            npu.load_article(article, self.es, article["GlobalEventID"], index = "test3")
             self.log("Loaded Article: " + str(article["GlobalEventID"]) + ": " +  article["title"])
         except Exception as e:
             self.log(str(e))
             self.log("Failed to load article into ES:", article["title"])
+            self.log("Timestamp of failure: ", article['timestamp'])
