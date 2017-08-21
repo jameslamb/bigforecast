@@ -5,7 +5,7 @@
     "envs": {
         "prod": {
             "user": "root",
-            "nimbus": "localhost",
+            "nimbus": "storm1.bigforecast.mids",
             "workers": [
                 "storm2.bigforecast.mids",
                 "storm3.bigforecast.mids",

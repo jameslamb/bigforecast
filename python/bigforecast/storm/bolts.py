@@ -23,7 +23,6 @@ class ScraperBolt(Bolt):
 
     def process(self, tup):
         article_data = json.loads(tup.values[0])
-        self.log("Recieved tuple: " + str(article_data["SOURCEURL"]))
         # If we can't download or parse the article, ignore it.
         try:
             article = npu.process_article(article_data["SOURCEURL"])
@@ -70,7 +69,7 @@ class ESLoaderBolt(Bolt):
                    **json.loads(tup.values[2])}
 
         try:
-            npu.load_article(article, self.es, article["GlobalEventID"], index = "test3")
+            npu.load_article(article, self.es, article["GlobalEventID"], index = "news")
             self.log("Loaded Article: " + str(article["GlobalEventID"]) + ": " +  article["title"])
         except Exception as e:
             self.log(str(e))
