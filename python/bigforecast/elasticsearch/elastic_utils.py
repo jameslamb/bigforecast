@@ -57,7 +57,7 @@ def doc_count(es_host, es_index, query=None, feature_name="doc_count",
                 }
 
     # Send query
-    response = requests.get(url, data=json.dumps(query))
+    response = requests.get(query_url, data=json.dumps(query))
 
     # Parse date histogram response into a DataFrame
     aggs_json = json.loads(response.text)['aggregations']['time']['buckets']
