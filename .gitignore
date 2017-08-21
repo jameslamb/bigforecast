@@ -26,3 +26,6 @@ kafka/.DS_Store
 sandbox/.DS_Store
 
 *_build/
+
+#GDELT Ingestion DB
+*.sqlite3
