@@ -3,16 +3,19 @@ import pandas as pd
 import requests
 
 
-def doc_count(es_host, es_index, feature_name="doc_count",
+def doc_count(es_host, es_index, query=None, feature_name="doc_count",
               start_time="now-1w", end_time="now", window_size="15m"):
     """
     Hit an Elasticsearch index and return a Pandas Series \
     (with a DateTimeIndex) where each value is the count \
-    of documents in the index for the preceding 15 minutes. \n
+    of documents matching some date_histogram query \
+    in the index for the preceding 15 minutes. If no query \
+    is given, just returns counts of all docs. \n
 
     Args:
         es_host (str): A hostname for an Elasticsearch cluster \n
         es_index (str): Index in that Elasticsearch cluster to hit \n
+        query (dict): A dictionary representing an ES query. \n
         feature_name (str): Name to give to the resulting count vector. \n
         start_time (str): Any valid date string to pass to \
             Elasticsearch. This param indicates the earliest date \
@@ -31,6 +34,7 @@ def doc_count(es_host, es_index, feature_name="doc_count",
     # Check inputs
     assert isinstance(es_host, str)
     assert isinstance(es_index, str)
+    assert isinstance(query, str)
     assert isinstance(start_time, str)
     assert isinstance(end_time, str)
     assert isinstance(window_size, str)
@@ -38,18 +42,19 @@ def doc_count(es_host, es_index, feature_name="doc_count",
     # Create URL to hit
     query_url = _make_query_url(es_host, es_index)
 
-    # Format query
-    query = {"size": 0,
-             "aggs": {
-                "time": {
-                    "date_histogram": {
-                    "field": "timestamp",
-                    "min_doc_count": 0,
-                    "interval": window_size
+    # Default query if none is given
+    if query is None:
+        query = {"size": 0,
+                 "aggs": {
+                    "time": {
+                        "date_histogram": {
+                        "field": "timestamp",
+                        "min_doc_count": 0,
+                        "interval": window_size
+                      }
+                    }
                   }
                 }
-              }
-            }
 
     # Send query
     response = requests.get(url, data=json.dumps(query))
