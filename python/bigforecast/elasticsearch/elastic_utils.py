@@ -76,4 +76,4 @@ def _make_query_url(es_host, es_index):
     so the "size=0" trailing argument is hard-coded below.
     """
 
-    return("{host}/{index}/_search?size=0".format(es_host, es_index))
+    return("{host}/{index}/_search?size=0".format(host=es_host, index=es_index))
