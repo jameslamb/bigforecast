@@ -1,4 +1,0 @@
-SHELL=/bin/sh
-MAILTO=chris
-
-* * * * * chris cd ~/Documents/bigforecast/oil_data/  && python3 minute_oil_data_download.py
