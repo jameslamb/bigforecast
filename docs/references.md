@@ -77,6 +77,7 @@ This page is a dumping ground for links we found helpful throughout this process
 14. [How to coerce a Pandas series to numeric, NaN-ing the non-numeric stuff](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_numeric.html)
 15. [Fitting an ARIMA model with exogenous regressors in Python](https://stackoverflow.com/questions/25044165/python-arima-exogenous-variable-out-of-sample)
 16. [Fitting a VAR model in Python](http://www.statsmodels.org/dev/vector_ar.html)
+17. [Comprehensive Overview of Pandas Timeseries Functions](https://pandas.pydata.org/pandas-docs/stable/timeseries.html)
 
 ## Storm <a name="storm"></a>
 

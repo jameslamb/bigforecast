@@ -1,0 +1,12 @@
+{
+  "size": 0,
+  "aggs": {
+    "blegh": {
+      "date_histogram": {
+        "field": "timestamp",
+        "min_doc_count": 0,
+        "interval": "15m"
+      }
+    }
+  }
+}
