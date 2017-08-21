@@ -21,7 +21,7 @@ class KafkaArticleSpout(Spout):
         self.log("Connected to the Kafka consumer")
     def next_tuple(self):
         msg = next(self.consumer)
-        self.log("Pulled msg off Kafka que: " + str(msg))
+        self.log("Pulled msg off Kafka que")
         msg_dict = json.loads(msg.value.decode("utf-8"))
         out_tuple = []
         out_tuple.append(json.dumps(msg_dict))
