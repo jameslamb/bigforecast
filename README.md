@@ -353,13 +353,22 @@ systemctl status influxdb
 
 ### Kicking Off Macro Ingestion <a name="macro"></a>
 
+#### Streaming
+
 If you've reached this point in the instructions, you're ready to start ingesting some data and piping it through the process! The first data source we'll tackle is macroeconomic time series. These data are represented as `(series_name, timestamp, value)` tuples. They require no additional validation and are pulled in batch, so ingestion is simply an always-on Python script that writes directly to InfluxDB. Note that this script will only pull data if the New York Stock Exchange is open. You could use [this super cool API](https://www.stockmarketclock.com/stock-market-api) to check that but it costs money.
 
-To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/ingestion`. Ingestion of macro data relies on a tiny config file stored at `ingestion/macro_config.json`. This has three fields:
+To begin, log in to `ingest1` and navigate to `$HOME/bigforecast/ingestion`. Ingestion of macro data relies on a tiny config file stored at `ingestion/macro_config.json`. 
+
+```
+sudo vi macro_config.json
+```
+
+This has four fields:
 
 - `influx_host` = A string with the IP address of the box you are running InfluxDB on
 - `modeldb` = A string with the name of the database inside InfluxDB that you want to write data to
-- `tickers` = An array of strings with valid ticker symbols from [Yahoo Finance](https://finance.yahoo.com/lookup/)
+- `equities` = An array of strings with valid ticker symbols for equities from [Yahoo Finance](https://finance.yahoo.com/lookup/)
+- `currencies` = An array of strings with valid ticker symbols for currencies from Yahoo Finance. These end in a `=X`, e.g. `USDJPY=X` for the US dollar - Japanese Yen spot rate
 
 Once you've edited this config to your liking, kick off ingestion by running the following commands:
 
@@ -434,7 +443,7 @@ import bigforecast.influx as bgfi
 
 
 # Connect to the DB
-influxDB = bgfi.db_connest(host="169.53.56.26",
+influxDB = bgfi.db_connect(host="169.53.56.26",
                            database="modeldb",
                            client_type="dataframe")
 
@@ -453,6 +462,28 @@ trainDF
 ```
 
 Congratulations! Your macro/finance data ingestion is up and running!
+
+#### Backfilling Historical Data
+
+The steps above will keep new data flowing into this system, but you may have noticed something...you'll have to wait for enough data to accumulate to start building models! Don't stress, we have something you might like.
+
+Take a look at `ingestion/macro_backfill.py`. That script takes in the same config as the streaming ingestion we set up above, but instead of regularly polling for the most recent value it fetches a bunch of historical data for the series of interest and dumps them into InfluxDB. So in other words...you can start building models right away!
+
+To ingest historical data, first log in to `modelbox`. If you skipped the previous section on the setup for streaming macro setup, go up and review the portion about editing the config.
+
+```
+cd $HOME/bigforecast/ingestion
+source activate bigforecast
+./macro_backfill.py
+```
+
+Just keep an eye on this as it runs, but if successful it will do all of the following for each of the tickers you've requested:
+
+- pull daily historical closing prices
+- convert those prices to `floats` and drop resulting missing values
+- [upsample the series](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.resample.html) to 5-minute granularity
+- [interpolate between points](http://machinelearningmastery.com/resample-interpolate-time-series-data-python/) using a cubic spline
+- write the new higher-frequency dataset to InfluxDB
 
 ### Kicking Off GDELT Ingestion <a name="monitorkafka"></a>
 

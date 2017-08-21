@@ -1,12 +1,35 @@
 {
-  "influx_host": "198.11.200.86",
+  "influx_host": "modelbox",
   "model_db": "modeldb",
-  "backfill_start": "2000-01-01",
-  "backfill_end": null,
-  "tickers": [
-    "uso",
-    "cad",
-    "goog",
-    "aapl"
+  "equities": [
+    "USO",
+    "CAD",
+    "GOOG",
+    "AAPL",
+    "OJSCY",
+    "XOM",
+    "PTR",
+    "BP",
+    "RDS-A",
+    "RDS-B",
+    "SHLX",
+    "CVX",
+    "PBR",
+    "LUKOY"
+  ],
+  "currencies": [
+    "EURGBP=X",
+    "EURJPY=X",
+    "EURUSD=X",
+    "EURRUB=X",
+    "GBPUSD=X",
+    "USDBRL=X",
+    "USDCAD=X",
+    "USDCHF=X",
+    "USDJPY=X",
+    "USDMXN=X",
+    "USDRUB=X",
+    "AUDUSD=X",
+    "NZDUSD=X"
   ]
 }

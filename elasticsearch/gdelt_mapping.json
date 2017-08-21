@@ -177,7 +177,8 @@
           "type": "geo_point"
         },
         "timestamp": {
-          "type": "date"
+          "type": "date",
+          "format": "date_hour_minute_second"
         },
         "authors": {
           "type": "keyword"

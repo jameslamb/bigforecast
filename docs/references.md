@@ -20,7 +20,8 @@ This page is a dumping ground for links we found helpful throughout this process
 3. [Heap Size in Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html)
 4. [Important Config Changes](https://www.elastic.co/guide/en/elasticsearch/guide/1.x/_important_configuration_changes.html)
 5. [elasticsearch-head UI](https://github.com/mobz/elasticsearch-head)
-6. [The 'date' datatype in Elasticsearch(https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html)
+6. [The 'date' datatype in Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html)
+7. [All  the different datetype formats in ES](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html)
 
 ## InfluxDB <a name="influxdb"></a>
 
@@ -53,6 +54,9 @@ This page is a dumping ground for links we found helpful throughout this process
 
 1. [Stock Market Status API (check if a given market is open)](https://www.stockmarketclock.com/stock-market-api)
 2. [Unix Epoch Convert (web calculator)](https://www.epochconverter.com/)
+3. [The Currencies Most Affected by Falling Oil Prices](http://www.investopedia.com/articles/investing/102015/currencies-most-affected-falling-oil-prices.asp)
+4. [In currency trading, what are the Commodity Pairs?](http://www.investopedia.com/ask/answers/09/commodity-pair.asp)
+5. [The most-traded currency pairs](http://theessentialsoftrading.com/Blog/2011/07/27/most-traded-currency-pairs/)
 
 ## Python/Jupyter/Conda <a name="python"></a>
 
@@ -68,6 +72,8 @@ This page is a dumping ground for links we found helpful throughout this process
 10. [(forum) How to get around the issues with Yahoo Finance historical data](https://stackoverflow.com/a/44445027)
 11. [(forum) How to read a CSV string into a pandas DataFrame](https://stackoverflow.com/questions/22604564/how-to-create-a-pandas-dataframe-from-string)
 12. [Pandas read_csv docs](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html)
+13. [(forum) Dropping Pandas rows with duplicate index values in](https://stackoverflow.com/questions/13035764/remove-rows-with-duplicate-indices-pandas-dataframe-and-timeseries)
+14. [How to coerce a Pandas series to numeric, NaN-ing the non-numeric stuff](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.to_numeric.html)
 
 ## Storm <a name="storm"></a>
 
