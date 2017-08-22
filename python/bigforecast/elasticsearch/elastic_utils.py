@@ -34,7 +34,7 @@ def doc_count(es_host, es_index, query=None, feature_name="doc_count",
     # Check inputs
     assert isinstance(es_host, str)
     assert isinstance(es_index, str)
-    assert isinstance(query, str)
+    assert isinstance(query, dict)
     assert isinstance(start_time, str)
     assert isinstance(end_time, str)
     assert isinstance(window_size, str)
@@ -65,10 +65,10 @@ def doc_count(es_host, es_index, query=None, feature_name="doc_count",
 
     # Create a time-series index from key_as_string
     aggsDF['time'] = pd.to_datetime(aggsDF['key_as_string'])
-    aggsDF = aggsDF.set_index(aggsDF['key_as_string'])
+    aggsDF = aggsDF.set_index(aggsDF['time'])
 
     # Rename 'doc_count' to whatever feature name was requested
-    aggsDF = aggsDF.rename(columns = {'doc_count': feature_name}, inplace=True)
+    aggsDF.rename(columns = {'doc_count': feature_name}, inplace=True)
 
     # Just return a series object
     return(aggsDF[feature_name])

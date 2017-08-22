@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 import pandas as pd
 from statsmodels.tsa.arima_model import ARIMA
 from sklearn.metrics import mean_squared_error
@@ -82,5 +82,5 @@ def prediction_plots(model, trainDF, target_var, exog_vars=None, holdout_perc=0.
     ax = trainDF[target_var][start_hist:end_hist].plot(ax=ax)
     title = "Dynamic Forecast {} into the future:".format(str(round(100*holdout_perc, 4)) + "%")
     ax.set_title(title)
-    fig = arima_model.plot_predict(end_hist, end_out_of_sample, dynamic=True, ax=ax, plot_insample=True)
+    fig = model.plot_predict(end_hist, end_out_of_sample, dynamic=True, ax=ax, plot_insample=True)
     plt.show()
